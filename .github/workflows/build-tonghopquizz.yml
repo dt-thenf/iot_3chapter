@@ -1,0 +1,72 @@
+name: Build IoT quiz PDF (XeLaTeX)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tonghop_cauhoi/tonghopquizz.tex'
+      - '.github/workflows/build-tonghopquizz.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-tonghopquizz
+  cancel-in-progress: false
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install XeLaTeX, Vietnamese language and fonts
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            texlive-xetex texlive-lang-other texlive-latex-extra \
+            texlive-fonts-recommended fonts-noto-core poppler-utils
+
+      - name: Compile XeLaTeX twice
+        run: |
+          set -euo pipefail
+          cd tonghop_cauhoi
+          xelatex -interaction=nonstopmode -halt-on-error tonghopquizz.tex
+          xelatex -interaction=nonstopmode -halt-on-error tonghopquizz.tex
+
+      - name: Verify PDF question count and text extraction
+        run: |
+          set -euo pipefail
+          pdfinfo tonghop_cauhoi/tonghopquizz.pdf | grep -E '^(Pages|Page size|File size):'
+          pdftotext -layout tonghop_cauhoi/tonghopquizz.pdf tonghop_cauhoi/tonghopquizz-extracted.txt
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          p=Path("tonghop_cauhoi/tonghopquizz-extracted.txt")
+          text=p.read_text(encoding="utf-8")
+          ids=[int(x) for x in re.findall(r"\bCâu\s+(\d+)\.", text)]
+          if ids != list(range(1,158)):
+              raise SystemExit(f"Incorrect question IDs: total={len(ids)}, start={ids[:4]}, end={ids[-4:]}")
+          print("Verified: 157 sequential questions, PDF text extractable.")
+          PY
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iot-tonghopquizz-pdf
+          path: tonghop_cauhoi/tonghopquizz.pdf
+
+      - name: Commit compiled PDF
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tonghop_cauhoi/tonghopquizz.pdf
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: compile 157-question IoT quiz PDF with XeLaTeX"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
