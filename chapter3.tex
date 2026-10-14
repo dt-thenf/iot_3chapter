@@ -1,0 +1,459 @@
+% CHỈ CHƯƠNG 3. Không chứa \documentclass hoặc \begin{document}.
+% Sử dụng trong main.tex: \input{chapter3.tex}
+\chapter{Công nghệ mạng trong Internet vạn vật}
+\label{chap:iot-networking}
+\begin{ghinho}[title={Mục tiêu và phạm vi}]
+Chương này tổng hợp bốn phần của 81 trang slide: (1) giao tiếp trong IoT; (2) công nghệ và giao thức truyền thông, gồm định danh, địa chỉ hóa, công nghệ truyền dẫn, bảo mật và định tuyến; (3) phân loại mạng IoT; (4) giao thức dữ liệu HTTP, CoAP, MQTT, WebSocket, AMQP và XMPP. Các bảng thông số được ghi theo chính slide, không được hiểu là mức cam kết cho mọi phiên bản, thiết bị hoặc quốc gia. 
+\end{ghinho}
+
+\section{Giao tiếp trong hệ thống IoT}
+\subsection{Khái niệm và vai trò của truyền thông}
+Internet vạn vật (Internet of Things, IoT) kết nối các thiết bị thông minh qua mạng, cho phép chúng trao đổi dữ liệu và thực hiện công việc với ít hoặc không cần sự can thiệp trực tiếp của con người. Những thiết bị này thường tích hợp linh kiện điện tử, cảm biến, phần mềm, kết nối mạng và cơ cấu chấp hành. Truyền thông là điều kiện để dữ liệu đo ở một thiết bị trở thành thông tin có ích cho các thiết bị, dịch vụ và người sử dụng ở nơi khác. Không có liên kết đáng tin cậy giữa các thiết bị và nền tảng xử lý, một hệ thống cảm biến rời rạc chưa phát huy đầy đủ giá trị IoT. \sourcepage{3}
+
+\subsection{Bốn hướng tương tác trong IoT}
+\paragraph{Người đến máy (Human-to-Machine, H2M).} Con người gửi đầu vào cho hệ thống dưới dạng giọng nói, văn bản, hình ảnh hoặc thao tác trực tiếp; thiết bị thu nhận, phân tích và đáp ứng bằng văn bản, hình ảnh hoặc hành động. H2M phối hợp phần cứng và phần mềm để hỗ trợ các công việc hằng ngày. Ví dụ: nhận dạng giọng nói; nhận dạng khuôn mặt; chấm công sinh trắc học. \sourcepage{4}
+
+\paragraph{Máy đến máy (Machine-to-Machine, M2M).} Hai hoặc nhiều máy trao đổi dữ liệu hoặc lệnh tự động, không đòi hỏi con người tham gia vào mỗi phiên liên lạc. Đường truyền có thể là hữu tuyến hoặc vô tuyến; một kết nối M2M điểm--điểm có thể sử dụng Ethernet hoặc mạng di động. IoT tiếp thu cách vận hành tự động của M2M và mở rộng sang các mạng thiết bị quy mô lớn có dịch vụ/nền tảng đám mây. Ví dụ: máy bán hàng tự động thông báo hết hàng cho nhà phân phối; máy giặt thông minh gửi thông báo hoàn tất; công tơ thông minh theo dõi điện năng và cảnh báo chủ sử dụng. \sourcepage{5--6}
+
+\paragraph{Máy đến người (Machine-to-Human, M2H).} Thiết bị chủ động phát tín hiệu, văn bản, hình ảnh hoặc lời nói hướng tới con người, kể cả khi người đó không trực tiếp phát yêu cầu. Ví dụ: chuông báo cháy, đèn giao thông, thiết bị giám sát sức khỏe. \sourcepage{7}
+
+\paragraph{Người đến người (Human-to-Human, H2H).} Con người liên lạc bằng lời nói, chữ viết, hình vẽ, nét mặt hoặc ngôn ngữ cơ thể. Trong một hệ thống IoT thực tế, H2H vẫn cần thiết để phối hợp xử lý sự cố, quản lý tình huống và đưa ra quyết định khi tự động hóa M2M chưa đáp ứng đủ. \sourcepage{8}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,box/.style={draw=navy,rounded corners,fill=blue!5,minimum width=36mm,minimum height=13mm,align=center},node distance=20mm]
+\node[box](human){Con người};\node[box,right=36mm of human](machine){Thiết bị IoT};
+\draw[->,thick,teal,bend left=20](human) to node[above]{H2M: lệnh/đầu vào}(machine);
+\draw[->,thick,orangeiot,bend left=20](machine) to node[below]{M2H: cảnh báo/kết quả}(human);
+\node[box,below=19mm of machine](node2){Thiết bị IoT khác};
+\draw[<->,thick,navy](machine)--node[right]{M2M}(node2);
+\node[box,below=19mm of human](human2){Con người khác};
+\draw[<->,thick,navy](human)--node[left]{H2H}(human2);
+\end{tikzpicture}
+\caption{Minh họa bốn loại hình tương tác H2M, M2M, M2H, H2H (vẽ lại theo các slide 4--8).}\end{figure}
+
+\section{Công nghệ và giao thức truyền thông IoT}
+\subsection{Tổng quan và yêu cầu lựa chọn}
+Một hệ thống IoT có thể dùng Bluetooth, Wi-Fi, Wi-Fi Direct, giao thức vô tuyến công suất thấp, mạng di động LTE/LTE-A hoặc các công nghệ khác. Không có giao thức tốt nhất cho mọi ứng dụng: phải cân nhắc tầm phủ sóng, mức tiêu thụ năng lượng, băng thông, độ trễ, chi phí, tính di động, quy mô nút và mức bảo mật. Slide giới thiệu các họ công nghệ: PLC, X10, NFC, UWB, Wi-Fi, BLE, Zigbee, Z-Wave, Weightless, Sigfox, LoRaWAN, Li-Fi, mạng tế bào/5G, LTE-M và NB-IoT. \sourcepage{2,9,18}
+
+\subsection{Định danh, đặt tên và địa chỉ hóa}
+\paragraph{Định danh (identification).} Khi một nút gia nhập mạng, nó cần được nhận biết bằng một định danh. Cơ chế định danh giúp quản lý thiết bị, xác định đối tượng giao tiếp và hạn chế xử lý lưu lượng không cần thiết trong mạng rất lớn. Hệ thống còn cần tên và địa chỉ để tìm đúng thiết bị, đúng tài nguyên. Lưu ý về mặt kỹ thuật: việc cấp định danh tự nó không chặn được tấn công hay lưu lượng tràn ngập; phải kết hợp xác thực, phân quyền và cơ chế điều khiển lưu lượng. \sourcepage{10}
+
+\paragraph{Đặt tên tài nguyên và đối tượng.} Ba cơ chế được nêu trong slide gồm:
+\begin{itemize}
+\item \textbf{URI (Uniform Resource Identifier):} chuỗi nhận dạng tài nguyên trên mạng. Ví dụ trong slide: \texttt{http://www.example.com/temperature/}.
+\item \textbf{EPC (Electronic Product Code):} mã định danh đối tượng vật lý, thường mã hóa trên thẻ RFID thụ động. Ví dụ: \texttt{urn:epc:id:sgtin:0614141.012345.62852}.
+\item \textbf{uCode (Ubiquitous Code):} mã định danh của hệ thống định danh đối tượng; ví dụ slide: \texttt{00001C00000000000001000285E7A6E3}. Trang giới thiệu: \url{https://www.uidcenter.org}.
+\end{itemize}
+\sourcepage{11}
+
+\paragraph{IPv4.} Giao thức Internet phiên bản 4 dùng địa chỉ 32 bit, biểu diễn thường gặp bằng bốn nhóm số thập phân phân tách bằng dấu chấm; tổng không gian lý thuyết là $2^{32}$ (xấp xỉ 4,3 tỷ) địa chỉ. Địa chỉ có thể chia mạng con, định tuyến và được cấu hình thủ công hoặc qua DHCP. Ví dụ slide minh họa dạng \texttt{192.168.5.18}. \sourcepage{12,14}
+
+\paragraph{IPv6.} Giao thức Internet phiên bản 6 dùng địa chỉ 128 bit, tương ứng $2^{128}\approx 3{,}4\times 10^{38}$ địa chỉ; ví dụ ký hiệu rút gọn sử dụng các nhóm số hệ 16 và dấu hai chấm. Mục tiêu thiết kế bao gồm giải quyết hạn chế không gian địa chỉ của IPv4 và hỗ trợ số lượng rất lớn thiết bị. IPv6 có cơ chế tự cấu hình địa chỉ, hỗ trợ multicast và khả năng phối hợp với các cơ chế bảo vệ như IPsec. \sourcepage{13--17}
+
+\begin{table}[htbp]\centering\small
+\caption{So sánh IPv4 và IPv6 theo minh họa các slide 12--17.}
+\begin{tabularx}{\textwidth}{p{3.15cm}XX}\toprule
+Tiêu chí & IPv4 & IPv6\\\midrule
+Độ dài địa chỉ & 32 bit & 128 bit\\
+Số địa chỉ lý thuyết & $2^{32}\approx4{,}3\cdot10^9$ & $2^{128}\approx3{,}4\cdot10^{38}$\\
+Dạng địa chỉ & 4 nhóm số thập phân (ví dụ 192.168.5.18) & Các nhóm số hệ 16, phân cách bằng dấu hai chấm\\
+Cấu hình & Thủ công hoặc DHCP & Hỗ trợ tự cấu hình; có thể dùng DHCPv6\\
+Ứng dụng trong IoT & Có thể bị hạn chế bởi số địa chỉ công cộng & Tạo không gian địa chỉ rất lớn cho nhiều nút\\\bottomrule
+\end{tabularx}\end{table}
+
+\paragraph{Các lợi ích IPv6 mà slide liệt kê.} (1) Dễ nhận diện và trao đổi dữ liệu giữa nhiều thiết bị hơn nhờ không gian địa chỉ lớn; (2) tự cấu hình đơn giản hơn ở quy mô lớn, có thể giảm công cấu hình và chi phí triển khai; (3) hỗ trợ truyền tải dữ liệu và hiệu quả sử dụng băng thông; (4) hỗ trợ các thuộc tính bảo mật về bí mật, xác thực và toàn vẹn khi cấu hình các cơ chế phù hợp; (5) multicast giúp tránh một số thao tác phát quảng bá thường xuyên, giảm số gói phải xử lý và có thể tiết kiệm pin; (6) cơ chế định tuyến và cấu trúc địa chỉ linh hoạt theo cách tổ chức mạng/ứng dụng. Đây là các lợi ích tiềm năng theo slide, không phải bảo đảm rằng bật IPv6 tự động tăng tốc hay bảo mật toàn bộ hệ thống. \sourcepage{16--17}
+
+\begin{ghinho}[title={Phân biệt ba khái niệm}]
+\textbf{Tên} cho biết tài nguyên hoặc đối tượng nào cần tìm; \textbf{định danh} phân biệt đối tượng trong hệ thống; \textbf{địa chỉ mạng} giúp chuyển gói đến vị trí mạng đang sử dụng. Tên, mã RFID và địa chỉ IP vì thế có thể cùng tồn tại trên một thiết bị IoT.
+\end{ghinho}
+
+\subsection{Công nghệ truyền dẫn qua dây điện: PLC và X10}
+\paragraph{PLC (Power-Line Communication).} PLC sử dụng ngay đường dây điện hiện có để mang cả điện năng xoay chiều và tín hiệu dữ liệu. Một nút có thể nhận nguồn điện và trao đổi thông tin mà không cần tuyến dây dữ liệu riêng. Phù hợp cho thiết bị cố định, nhà thông minh, lưới điện thông minh, phương tiện hoặc môi trường có nhiễu vô tuyến cao. Hạn chế thực tế phụ thuộc chất lượng dây, tải và nhiễu từ thiết bị điện. \sourcepage{19}
+
+\paragraph{X10.} Chuẩn điều khiển thiết bị trên đường điện ra đời khoảng thập niên 1970. Tín hiệu điều khiển được đưa lên dây điện bằng các xung sóng mang RF ngắn. Tốc độ và phạm vi thấp so với một số hệ PLC khác nhưng chi phí thấp; ứng dụng chính là bật/tắt, điều chỉnh đèn và điều khiển ổ cắm trong nhà thông minh qua bộ điều khiển hoặc ứng dụng. \sourcepage{20}
+
+\begin{longtable}{p{.38\textwidth}p{.55\textwidth}}
+\caption{Các thông số X10 theo bảng ở slide PDF trang 21.}\\\toprule
+Thông số & Giá trị trong slide\\\midrule\endfirsthead
+\toprule Thông số & Giá trị trong slide\\\midrule\endhead
+Môi trường truyền & Đường dây điện (powerline only)\\
+Loại thiết bị & Bộ điều khiển; thiết bị bị điều khiển; thiết bị có báo trạng thái\\
+Điều chế lớp vật lý & OOK, sóng mang 120 kHz\\
+Tốc độ dữ liệu & 120 bps tức thời; 60 bps duy trì; 24 bps tải hữu ích\\
+Địa chỉ hóa & 16 mã nhà A--P và 16 mã thiết bị 1--16, tối đa 256 địa chỉ\\
+Lệnh & 16 lệnh, như ON, OFF, DIM, BRIGHT, ALL UNITS OFF, ALL LIGHTS ON\\
+Độ dài thông điệp & Slide ghi 100 bit (8,5 byte); hai trị số không tương đương nên cần kiểm tra nếu dùng thiết kế bản tin\\
+Mã hóa & Manchester\\
+Cấu trúc gói & Start Code 4 bit; House Code 8 bit; Key Code 10 bit (theo slide)\\
+ACK và bảo mật & Không hỗ trợ theo bảng slide\\\bottomrule
+\end{longtable}
+
+\subsection{Giao tiếp khoảng cách rất ngắn: NFC và UWB}
+\paragraph{NFC (Near-Field Communication).} Tập hợp giao thức vô tuyến cho các thiết bị tiếp xúc/đặt gần nhau, hướng tới xác thực, đọc/ghi thẻ, chia sẻ dữ liệu và kiểm soát ra vào; ví dụ thanh toán thông minh. Khác với cách dùng RFID chỉ để định danh trong nhiều hệ thống, NFC có các chế độ giao tiếp cho cả thiết bị và thẻ. \sourcepage{22}
+
+\begin{longtable}{p{.47\textwidth}p{.45\textwidth}}
+\caption{Thông số và chế độ NFC theo slide PDF trang 23.}\\\toprule
+Đặc tính & Giá trị được nêu\\\midrule\endfirsthead
+\toprule Đặc tính & Giá trị được nêu\\\midrule\endhead
+Tần số mang & 13,56 MHz\\
+Khoảng cách & Dưới 10 cm (bảng đối chiếu trang 42 sử dụng 4 cm)\\
+Tốc độ & 106, 212 hoặc 424 kbit/s\\
+Đối tượng & Thẻ (tag) và đầu đọc (reader)\\
+Loại thẻ & Type 1 đến Type 5\\
+Cấu hình mạng & Peer-to-peer\\
+Chế độ thiết bị & Card emulation; reader/writer; peer-to-peer (active/passive)\\
+Cách giao tiếp & Active--passive hoặc active--active\\
+Thiết lập kết nối & Bảng slide ghi 'vài giây' và 'xấp xỉ dưới 0,1 giây'; cần xác định phép đo cụ thể\\
+Mã hóa đường truyền & NRZ-L, Manchester, Modified Miller\\
+Điều chế & ASK, BPSK (theo bảng)\\
+Giải quyết va chạm & Có cơ chế chống va chạm\\
+Tiêu chuẩn & ISO 14443A/B, ISO 18092, JIS X6319-4\\\bottomrule
+\end{longtable}
+
+\paragraph{UWB (Ultra-Wideband).} Vô tuyến sử dụng phổ tần rất rộng và xung phát năng lượng thấp để truyền dữ liệu và/hoặc định vị. Theo slide, khả năng hạn chế can nhiễu và theo dõi vị trí từng nút hỗ trợ mở rộng hệ thống; ứng dụng nổi bật là dịch vụ định vị và theo dõi tài sản. Không đồng nhất UWB với định vị GPS hay với mạng LPWAN: công năng và môi trường triển khai khác nhau. \sourcepage{24}
+
+\subsection{Wi-Fi và Wi-Fi HaLow}
+Wi-Fi phổ biến trong kết nối mạng cục bộ và có thể thiết lập kết nối ad hoc như Wi-Fi Direct mà không cần access point. Điểm bất lợi với cảm biến chạy pin là công suất tiêu thụ, dù nó không quan trọng bằng đối với nhiều thiết bị nhà thông minh có nguồn ổn định. \term{Wi-Fi HaLow}{IEEE 802.11ah} là hướng phát triển Wi-Fi tiết kiệm năng lượng dùng dải tần dưới 1 GHz, hướng tới thiết bị IoT. Bảng minh họa của slide nêu kênh OFDM băng hẹp, chế độ tiết kiệm năng lượng, IP gốc, bảo mật Wi-Fi, phạm vi khoảng 1 km, khả năng xuyên tường và hoạt động với pin nhỏ trong thời gian dài theo điều kiện ứng dụng. \sourcepage{25--26}
+
+\subsection{Bluetooth Low Energy (BLE)}
+BLE là kết nối vô tuyến tầm ngắn cho mạng cá nhân (PAN), chú trọng thiết bị cảm biến và wearable có nhu cầu trao đổi gói dữ liệu nhỏ, không liên tục. Từ Bluetooth 4.0, các cơ chế năng lượng thấp thích hợp để một nút hỗ trợ kết nối các nút cục bộ và chuyển dữ liệu về backend. Ứng dụng: tòa nhà thông minh, giao thông, thiết bị đeo. \sourcepage{27}
+
+\begin{table}[htbp]\centering\small
+\caption{Bảng Classic Bluetooth và BLE ở slide PDF trang 28 (số liệu theo phiên bản trong slide).}
+\begin{tabularx}{\textwidth}{p{3.4cm}XX}\toprule
+Thông số & Classic Bluetooth & BLE\\\midrule
+Tầm hoạt động & 100 m & Hơn 100 m\\
+Tốc độ dữ liệu & 1--3 Mb/s & 1 Mb/s\\
+Thông lượng ứng dụng & 0,7--2,1 Mb/s & 0,27 Mb/s\\
+Tần số & 2,4 GHz & 2,4 GHz\\
+Bảo mật & 56/128 bit (bảng nguồn) & AES 128 bit với CCM\\
+Độ trễ & 100 ms & 6 ms\\
+Thời gian thiết lập & 100 ms & 3 ms\\
+Âm thanh & Có & Không (bảng theo đời cũ)\\
+Mô hình mạng & Sao & Sao\\
+Công suất tiêu thụ (theo slide) & 1 W & 0,01--0,5 W\\
+Dòng đỉnh (theo slide) & Dưới 30 mA & Dưới 15 mA\\\bottomrule
+\end{tabularx}\end{table}
+
+\begin{nguonslide}[title={Lưu ý với bảng Bluetooth}]
+Bảng trang 28 phản ánh cách so sánh trong thời điểm soạn slide, không đại diện cho mọi phiên bản Bluetooth mới hơn. Đặc biệt mục \emph{Voice capable: No} áp dụng theo bảng lịch sử và không mô tả đầy đủ LE Audio. Nên dùng datasheet thiết bị cụ thể để thiết kế công suất.
+\end{nguonslide}
+
+\subsection{Zigbee}
+Zigbee là công nghệ phù hợp mạng cảm biến/điều khiển công suất thấp với yêu cầu an toàn, độ bền kết nối và nhiều nút; được sử dụng trong ứng dụng công nghiệp và tự động hóa. Zigbee 3.0 được slide mô tả là sự thống nhất các chuẩn Zigbee trước đó. \sourcepage{29}
+
+Các tính chất giao thức được liệt kê: hỗ trợ điểm--điểm, điểm--đa điểm và mesh; chu kỳ hoạt động (duty cycle) thấp giúp kéo dài tuổi thọ pin; độ trễ thấp; trải phổ chuỗi trực tiếp (DSSS); khả năng mở rộng tới khoảng 65.000 nút/mạng theo slide; mã hóa AES 128 bit; tránh xung đột, phát lại và xác nhận. Các giới hạn triển khai thực tế phụ thuộc cấu hình và thiết bị. \sourcepage{30}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[node distance=12mm, every node/.style={font=\small}, coord/.style={circle,draw=orangeiot,fill=orange!25,minimum size=8mm},router/.style={circle,draw=teal,fill=cyan!20,minimum size=8mm},end/.style={circle,draw=navy,fill=blue!12,minimum size=7mm}]
+\node[coord](c){C}; \node[router,below left=14mm and 22mm of c](r1){R};\node[router,below right=14mm and 22mm of c](r2){R};\node[router,below=30mm of c](r3){R};
+\node[end,below left=13mm and 7mm of r1](a){E}; \node[end,left=17mm of r1](b){E}; \node[end,right=17mm of r2](d){E};\node[end,below right=13mm and 7mm of r2](e){E};
+\draw[thick] (c)--(r1)--(r3)--(r2)--(c);\draw[thick] (r1)--(r2);\draw (r1)--(a) (r1)--(b) (r2)--(d) (r2)--(e);
+\end{tikzpicture}
+\caption{Ví dụ mạng Zigbee mesh. C: coordinator; R: router; E: end device (vẽ lại từ sơ đồ các topo slide 31).}\end{figure}
+
+\subsection{Z-Wave}
+Z-Wave được ứng dụng chủ yếu trong nhà thông minh để gắn thiết bị điện, điều khiển từ Internet và hỗ trợ an ninh/tự động hóa. Theo slide: tần số 868,42 MHz tại châu Âu, 908,42 MHz tại Hoa Kỳ; các tốc độ 9,6; 40; 200 kbit/s; điều chế GFSK ở dải gần 900 MHz; tầm khoảng 30 m trong nhà và 100 m ngoài trời. Thông số phụ thuộc khu vực pháp lý và phiên bản thiết bị. \sourcepage{32}
+
+\subsection{Weightless, Sigfox và LoRaWAN}
+\paragraph{Weightless.} Họ tiêu chuẩn mở LPWAN kết nối trạm gốc với hàng nghìn nút. Có Weightless-W, Weightless-P và Weightless-N cho các điều kiện khác nhau. Weightless-W hỗ trợ hai chiều ở phổ trắng truyền hình (TV white spaces), slide lấy ví dụ lĩnh vực dầu khí; Weightless-P cũng hai chiều, thích hợp mạng riêng và các trường hợp cần cả đường lên/đường xuống. Slide chỉ nêu tên Weightless-N mà không khai triển tính chất của biến thể này. \sourcepage{33}
+
+\paragraph{Sigfox.} Dịch vụ kết nối LPWAN theo thuê bao tại các quốc gia được triển khai, tối ưu gói dữ liệu nhỏ gửi không thường xuyên. Ví dụ tiêu biểu: thiết bị đo thông minh hoặc cảm biến phát cảnh báo. \sourcepage{34}
+
+\paragraph{LoRaWAN.} Công nghệ mạng diện rộng công suất thấp do hệ sinh thái LoRa Alliance thúc đẩy, cho truyền hai chiều, hướng tới chi phí thấp, pin lâu, mạng lớn và dịch vụ di động. Ứng dụng: thành phố thông minh và công nghiệp. Cần phân biệt điều chế vô tuyến LoRa ở lớp vật lý với giao thức mạng LoRaWAN. \sourcepage{35}
+
+\subsection{Li-Fi và truyền thông ánh sáng}
+Li-Fi (Light Fidelity) dùng ánh sáng nhìn thấy (Visible Light Communication, VLC) để truyền dữ liệu tốc độ cao, có thể tận dụng đèn LED hiệu suất cao. Điểm hạn chế trong mô tả slide là yêu cầu điều kiện truyền quang phù hợp, dễ bị cản bởi vật chắn hoặc mất đường nhìn; chưa được triển khai rộng rãi trong IoT tại thời điểm biên soạn. Tiềm năng: lớp học và phòng trình chiếu thông minh. \sourcepage{36}
+
+\subsection{Mạng di động và 5G}
+Các thế hệ mạng tế bào (3G, 4G, LTE-Advanced, 5G) có vùng phủ rộng và khả năng hỗ trợ thiết bị di động. LTE-Advanced được slide lấy làm ví dụ về tiến bộ tốc độ và chế độ tiết kiệm năng lượng: có biến thể/chế độ cho các nút có thể đạt thời gian pin rất dài tùy chu kỳ gửi dữ liệu; bản LTE-A khác có tốc độ tối đa ở mức rất cao. Hai trị số 10 Mb/s và 1 Gb/s trong slide mô tả các trường hợp khác nhau, không phải một cấu hình chung. \sourcepage{37}
+
+Slide 5G (có trích dẫn dự báo trước năm 2020) nêu tăng tốc độ, độ phủ, số người dùng và mức cơ động so với 4G. Bảng so sánh 4G/5G ở slide PDF trang 39 có các ý: dải tần 4G khoảng 600 MHz--5,925 GHz; 5G gồm FR1 (khoảng 450 MHz--6 GHz) và FR2 (khoảng 24,25--52,6 GHz, tùy quy định); băng thông 4G tới 20 MHz, 5G FR1 tới 100 MHz/FR2 tới 400 MHz; khoảng cách sóng mang 4G cố định 15 kHz, 5G mở rộng; tốc độ đỉnh downlink theo slide là 1 Gb/s và 20 Gb/s; độ trễ slide lần lượt 10 ms và dưới 1 ms; quy mô kết nối 2.000 so với 1 triệu thiết bị/km$^2$; tốc độ di động 350 so với 500 km/h. Đây là mục tiêu/giá trị minh họa trong bảng, không phải hiệu năng bảo đảm mọi vùng phủ. \sourcepage{38--39}
+
+\subsection{LTE-M và NB-IoT}
+\paragraph{LTE-M.} LTE-M, tên đầy đủ LTE Machine-Type Communication, gồm eMTC (enhanced MTC), là công nghệ kết nối di động LPWAN do 3GPP thiết kế cho thiết bị M2M/IoT. eMTC LTE Cat M1 đã được đặc tả ở 3GPP Release 13 (tháng 6 năm 2016 theo slide). Hệ 3GPP còn có NB-IoT và EC-GSM-IoT. \sourcepage{40}
+
+\paragraph{NB-IoT.} Narrowband IoT là tiêu chuẩn LPWAN cho các thiết bị truyền dữ liệu ít, chú trọng mức tiêu thụ điện thấp, dung lượng mạng, hiệu quả phổ và vùng phủ sâu (ví dụ trong công trình). Slide cho rằng thời gian dùng pin hơn 10 năm khả thi ở một số kịch bản; điều này phụ thuộc dữ liệu gửi, vùng phủ, pin và cấu hình hoạt động. \sourcepage{41}
+
+\begin{table}[htbp]\centering\small
+\caption{So sánh khái quát hai công nghệ LTE-M và NB-IoT từ slide PDF trang 50.}
+\begin{tabularx}{\textwidth}{p{3.4cm}XX}\toprule
+Đặc tính & LTE-M & NB-IoT\\\midrule
+Tên chuẩn & LTE Cat M1 (theo slide) & LTE Cat NB1\\
+Băng thông & Khoảng 1,08 MHz, trong kênh LTE 1,4 MHz & Tới 180 kHz\\
+Thông lượng & 36 kb/s (giá trị trong bảng slide) & 30/60 kb/s (giá trị trong bảng slide)\\
+Triển khai & Trong các mạng LTE hiện hữu & In-band, guard-band hoặc độc lập trong một số phổ GSM\\
+Khả năng giọng nói & Có hỗ trợ thoại/VoLTE theo cấu hình & Không được thiết kế cho thoại\\
+Di động/chuyển giao & Có & Hạn chế\\
+Thời lượng pin theo bảng & Có thể tới 10 năm & Có thể tới 10 năm\\\bottomrule
+\end{tabularx}\end{table}
+
+\subsection{Bảng tổng hợp phổ, tầm phủ và tốc độ các công nghệ}
+\begin{longtable}{p{2.6cm}p{3.5cm}p{2.25cm}p{3.6cm}}
+\caption{Bảng đối chiếu slide PDF trang 42; số liệu tham khảo theo slide, không đại diện mọi phiên bản.}\\
+\toprule Công nghệ & Tần số theo slide & Tầm phủ & Tốc độ theo slide\\\midrule\endfirsthead
+\toprule Công nghệ & Tần số theo slide & Tầm phủ & Tốc độ\\\midrule\endhead
+Bluetooth & 2,4 GHz & 100 m & 125 kbit/s--Mb/s\\
+Wi-Fi & 2,4 hoặc 5 GHz & 50 m & 150--600 Mb/s\\
+NFC & 13,56 MHz & 4 cm & 100--420 kbit/s\\
+LoRaWAN & 867--869 MHz (Âu); 902--928 MHz (Bắc Mỹ) & 15 km & 0,3--50 kbit/s\\
+Cellular & 900/1800/1900/2100 MHz & Bảng nguồn ghi 30 m (nút--trạm), không phải tầm phủ mạng tế bào nói chung & 21 Mb/s (3G+); 600 Mb/s (4G)\\
+Z-Wave & 865--926 MHz (ISM) & 100 m & 100 kbit/s\\
+Zigbee & 2,4 GHz (ISM) & 100 m & 20--250 kbit/s\\
+Sigfox & 900 MHz & 3--50 km & 10--1000 bit/s\\\bottomrule
+\end{longtable}
+
+\subsection{Bảo mật ở lớp truyền thông}
+Các giao thức được slide nêu bao gồm:
+\begin{itemize}
+\item \textbf{IPsec (Internet Protocol Security):} cơ chế bảo mật ở lớp mạng IP, cung cấp các phương thức xác thực, toàn vẹn và mã hóa khi được triển khai/cấu hình đúng. Được sử dụng với IPv6 nhưng không nên hiểu IPsec mặc nhiên được bật trên mọi mạng IPv6.
+\item \textbf{TLS (Transport Layer Security):} bảo vệ kênh kết nối dựa trên TCP, ví dụ HTTPS hoặc MQTT qua TLS.
+\item \textbf{DTLS (Datagram Transport Layer Security):} giải pháp bảo mật cho truyền thông kiểu datagram như UDP, ví dụ CoAP/DTLS.
+\item \textbf{IEEE 1888.3:} thành viên họ tiêu chuẩn dành cho mạng điều khiển cộng đồng xanh phổ cập (Ubiquitous Green Community Control Network). Mục đích theo slide là hạn chế truy cập trái phép, ngăn rò rỉ dữ liệu và bảo đảm tính bí mật/toàn vẹn dữ liệu truyền.
+\end{itemize}
+Các thuộc tính cốt lõi là bảo mật nội dung, xác thực đối tác và phát hiện sửa đổi; hệ thống IoT vẫn phải quản lý khóa, phân quyền nút và cập nhật phần mềm. \sourcepage{43}
+
+\subsection{Định tuyến và giao thức RPL}
+Định tuyến (routing) là quá trình chọn đường chuyển lưu lượng trong một mạng hoặc qua nhiều mạng. Với rất nhiều thiết bị có tài nguyên hạn chế, chạy pin và liên kết chất lượng không ổn định, lựa chọn đường tốt có ảnh hưởng lớn tới khả năng mở rộng, thời gian gửi dữ liệu và thời lượng pin.
+
+\term{RPL}{Routing Protocol for Low-Power and Lossy Networks} là chuẩn định tuyến IPv6 dành cho mạng công suất thấp và liên kết dễ mất gói. Slide nêu có thể sử dụng trên IEEE 802.15.4, hỗ trợ các kiểu truyền một--một, nhiều--một và một--nhiều. Hình trang 45 biểu diễn hai cấu hình \emph{DODAG} (Destination-Oriented Directed Acyclic Graph): non-storing và storing mode; các nút tổ chức tương quan với nút gốc, còn phương thức duy trì đường đi phụ thuộc chế độ hoạt động. \sourcepage{44--45}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex, every node/.style={font=\small}, leaf/.style={circle,draw=orangeiot,fill=orange!18,minimum size=8mm}, root/.style={circle,draw=navy,fill=blue!20,minimum size=10mm}]
+\node[root](r) at (0,3){Gốc};
+\node[leaf](a) at (-2,1.7){A};\node[leaf](b) at (0,1.7){B};\node[leaf](c) at (2,1.7){C};
+\node[leaf](d) at (-2.6,0){D};\node[leaf](e) at (-.9,0){E};\node[leaf](f) at (1,0){F};\node[leaf](g) at (2.7,0){G};
+\foreach \x/\y in {a/r,b/r,c/r,d/a,e/a,e/b,f/b,f/c,g/c}{\draw[->,teal,thick](\x)--(\y);}
+\end{tikzpicture}
+\caption{Một đồ thị định tuyến hướng về nút gốc kiểu DODAG của RPL (minh họa vẽ lại từ slide trang 45).}\end{figure}
+
+\section{Các loại mạng IoT}
+Việc kết nối tin cậy giữa cảm biến, thiết bị và nền tảng IoT quyết định hoạt động của ứng dụng. Slide chia các mạng đang dùng thành bốn nhóm: mạng tế bào, mạng cục bộ/cá nhân (LAN/PAN), mạng diện rộng công suất thấp (LPWAN), và mạng mắt lưới (mesh). Đây là các góc nhìn phân loại theo phạm vi/vận hành và topo; một hệ thống thực tế có thể kết hợp chúng. \sourcepage{47}
+
+\subsection{Mạng tế bào (Cellular Networks)}
+Mạng tế bào sử dụng cơ sở hạ tầng nhà khai thác di động giống điện thoại thông minh để kết nối thiết bị IoT. Ưu điểm là vùng phủ địa lý rộng và hỗ trợ tính di động; hạn chế là điện năng và phí dịch vụ, cũng như khả năng phủ sóng kém ở hầm sâu, tủ kỹ thuật kín, mỏ hoặc công trình nhiều lớp vật cản. LTE-M và NB-IoT là hai lựa chọn IoT di động được đề cập; slide cho rằng NB-IoT có thể tiêu thụ ít năng lượng và giá thành thấp hơn LTE-M, nhưng phạm vi hỗ trợ dịch vụ phụ thuộc mạng triển khai ở thời điểm khảo sát. \sourcepage{48--50}
+
+\subsection{Mạng cục bộ và cá nhân (LAN/PAN)}
+PAN (Personal Area Network) dùng cho kết nối các thiết bị gần cá nhân; LAN (Local Area Network) kết nối các nút trong nhà, khu vực hoặc cơ sở. Phạm vi ngắn, chi phí sử dụng thường thấp; độ tin cậy phụ thuộc nhiễu, vật cản, mật độ nút và cấu hình. Hai ví dụ chính trong slide là Wi-Fi và Bluetooth. Có thể dùng gateway chuyển dữ liệu của mạng LAN/PAN ra mạng diện rộng. \sourcepage{51--52}
+
+\subsection{Mạng diện rộng công suất thấp (LPWAN)}
+LPWAN cho tầm xa hơn các kết nối Wi-Fi/Bluetooth thông dụng nhưng thường dùng ít năng lượng hơn nhiều công nghệ di động băng rộng. Đổi lại, tốc độ thấp và phù hợp các bản tin cảm biến nhỏ, gửi cách quãng. LoRaWAN, Sigfox, Weightless và các biến thể LPWAN tế bào như LTE-M/NB-IoT là các ví dụ đã giới thiệu trong phần trên. \sourcepage{53}
+
+\subsection{Mạng mắt lưới (Mesh Networks)}
+Trong mạng mesh, các nút có thể phối hợp chuyển tiếp dữ liệu cho nhau để đến gateway. Tầm mỗi bước nhảy có thể ngắn nhưng tổng vùng phủ được kéo dài qua nhiều nút trung gian. Điều này hữu ích cho cảm biến phân tán trong một tòa nhà; đổi lại cần đủ nút, bộ chuyển tiếp và cấu hình đường đi để tránh các vùng không phủ. Sơ đồ Zigbee và RPL ở các phần trước là những minh họa thích hợp cho kiến trúc đa chặng. \sourcepage{54}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,scale=1,transform shape]
+\draw[->,thick] (0,0)--(12,0) node[right]{Tầm phủ};
+\draw[->,thick] (0,0)--(0,5) node[above,align=center]{Tốc độ dữ liệu};
+\fill[blue!12] (.6,2.8) rectangle (3.3,4.6);\node[align=center] at (1.95,3.8){Wi-Fi\\Bluetooth};
+\fill[cyan!16] (7,.65) rectangle (10.15,2.45);\node[align=center] at (8.55,1.55){LPWAN\\LoRa, Sigfox, NB-IoT};
+\fill[orange!15] (4.0,2.5) rectangle (10.7,4.65);\node[align=center] at (7.45,3.65){Mạng tế bào\\2G/3G/4G/5G};
+\end{tikzpicture}
+\caption{So sánh định tính tầm phủ--tốc độ theo bố cục slide trang 55; vị trí vùng chỉ mang tính mô tả, không theo thang số.}\end{figure}
+
+\begin{table}[htbp]\centering\small
+\caption{Tóm tắt bốn nhóm mạng IoT.}
+\begin{tabularx}{\textwidth}{p{2.6cm}XXX}\toprule
+Loại mạng & Điểm mạnh & Hạn chế & Ví dụ\\\midrule
+Cellular & Phủ rộng, di động & Năng lượng/chi phí; vùng phủ trong nhà sâu & 4G, LTE-M, NB-IoT, 5G\\
+LAN/PAN & Chi phí triển khai thấp, tốc độ tùy công nghệ & Tầm ngắn, dễ bị cản/nhiễu & Wi-Fi, BLE\\
+LPWAN & Tầm xa, phù hợp cảm biến chạy pin & Thông lượng thấp, hạn chế payload/chu kỳ & LoRaWAN, Sigfox, Weightless\\
+Mesh & Mở rộng đa chặng, có tuyến thay thế & Cần nút chuyển tiếp, phức tạp định tuyến & Zigbee mesh, RPL\\\bottomrule
+\end{tabularx}\end{table}
+
+\subsection{Sơ đồ phân nhóm các công nghệ mạng}
+Slide trang 46 sắp xếp mạng theo \emph{cellular}, \emph{wired}, \emph{satellite}, \emph{short-range wireless}, và \emph{LP-WAN / LP wireless}. Các mục được nêu gồm: 2G/2.5G, 3G, 4G/LTE, 5G; POTS, Fiber, Ethernet, ATM/Frame Relay, MPLS, Powerline; C-Band và L-Band; Wi-Fi/802.11, Bluetooth/BLE, Zigbee/802.15.4, 900 MHz proprietary, 6LoWPAN, Wi-Fi HaLow; WiMAX, Sigfox, LoRa, NB-IoT, LTE-M, Fixed Microwave và WiSUN. Hình này bổ sung các loại truyền dẫn chứ không thay đổi cách phân nhóm bốn loại của slide 47.
+
+\section{Giao thức dữ liệu của IoT}
+\subsection{Vai trò của giao thức ứng dụng và mô hình trao đổi}
+Slide bắt đầu bằng việc phân biệt truyền thông dữ liệu giữa các thiết bị với khả năng truy cập Internet, nhấn mạnh các nút công suất thấp có thể giao tiếp trực tiếp bằng liên kết có dây hoặc vô tuyến mà không phải lúc nào cũng cần truy cập Internet. Trong ngăn xếp giao thức, Wi-Fi/BLE/LoRa thuộc nhóm công nghệ kết nối bên dưới, còn HTTP, CoAP, MQTT, WebSocket, AMQP và XMPP cung cấp cách thức trao đổi thông điệp ở tầng ứng dụng. \sourcepage{56,60}
+
+Một nút IoT có thể thu thập dữ liệu, phân tích dữ liệu và điều khiển nút khác. Tùy hệ thống, trước khi tương tác với dịch vụ, nút cần được nhận dạng và đăng ký. Slide gọi quá trình đó là \emph{node subscription}. Trong ngữ cảnh truyền dữ liệu, cần phân biệt \emph{đăng ký một nút với dịch vụ} và \emph{đăng ký theo dõi một chủ đề dữ liệu (subscribe topic)}. \sourcepage{57}
+
+\paragraph{Publish/subscribe (xuất bản/đăng ký).} Nút xuất bản (publisher) gửi bản tin lên một chủ đề/kênh; các nút đăng ký (subscriber) nhận dữ liệu tương ứng khi bản tin được xuất bản. Thành phần trung gian có thể là broker; cách tiếp cận tách người gửi và người nhận và thuận lợi cho nhiều nút trao đổi thường xuyên. \sourcepage{58--59}
+
+\paragraph{Request/response (yêu cầu/phản hồi).} Client chủ động yêu cầu dữ liệu hoặc tác vụ và server trả kết quả. Mô hình quen thuộc với ứng dụng client/server và các dịch vụ REST. Slide nhận xét publish/subscribe thường thuận lợi hơn với triển khai IoT lớn trao đổi dữ liệu nhiều, trong khi request/response dễ tích hợp ứng dụng client/server. \sourcepage{59}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small,block/.style={draw=navy,rounded corners,minimum width=29mm,minimum height=10mm,fill=blue!6}]
+\node[block](cli) at (0,2.7){Client};\node[block](serv) at (5,2.7){Server};
+\draw[->,thick,teal] (cli)--node[above]{Request}(serv);
+\draw[<-,thick,orangeiot] (cli) to[bend right=22] node[below]{Response}(serv);
+\node[block](pub) at (0,0){Publisher};\node[block](broker) at (5,0){Broker};\node[block](sub) at (10,0){Subscriber};
+\draw[->,thick,teal](pub)--node[above]{Publish}(broker);
+\draw[->,thick,teal](broker)--node[above]{Push chủ đề}(sub);
+\end{tikzpicture}
+\caption{Hai mô hình trao đổi dữ liệu ở slide trang 57--59.}\end{figure}
+
+\subsection{HTTP: Hypertext Transfer Protocol}
+HTTP là giao thức ứng dụng phổ biến của Web, thường theo mô hình \emph{pull}: client gửi yêu cầu lấy tài nguyên, server trả phản hồi. HTTP không lưu trạng thái yêu cầu trước đó ở bản thân giao thức (stateless), hỗ trợ thương lượng kiểu nội dung và biểu diễn tài nguyên để các hệ thống được phát triển độc lập vẫn trao đổi dữ liệu. \sourcepage{61--62}
+
+Những phương thức HTTP phổ biến: \texttt{GET} (đọc tài nguyên), \texttt{POST} (tạo/xử lý dữ liệu), \texttt{PUT} (thay thế/cập nhật tài nguyên), \texttt{PATCH} (cập nhật một phần), \texttt{DELETE} (xóa). CRUD: Create--Read--Update--Delete là các thao tác ứng dụng tương ứng ở mức khái niệm, không phải ánh xạ duy nhất cho mọi API. \sourcepage{62}
+
+Theo slide, HTTP có hạn chế đối với một số hệ thống IoT: quá nhiều cặp yêu cầu--phản hồi khi nhiều cảm biến hoạt động khiến phát sinh độ trễ và năng lượng; thông thường client khởi xướng yêu cầu thay vì server tự đẩy bản tin như mô hình publish/subscribe; HTTP/TCP có overhead và chi phí kết nối, không tối ưu cho một số cảm biến dùng pin. Những hạn chế này được mô tả cho cách triển khai HTTP phổ biến; các biến thể HTTP mới, keep-alive, server push hoặc kỹ thuật khác có thể thay đổi chi phí thực tế. \sourcepage{63--64}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small]
+\node at (0,4.8){Client};\node at (6,4.8){Server};
+\draw[dashed](0,4.4)--(0,0);\draw[dashed](6,4.4)--(6,0);
+\draw[->,thick,navy](0,4)--node[above]{TCP: SYN}(6,3.5);
+\draw[<-,thick,navy](0,2.9)--node[above]{SYN/ACK}(6,3.4);
+\draw[->,thick,navy](0,2.8)--node[above]{ACK}(6,2.4);
+\draw[->,thick,teal](0,2)--node[above]{HTTP GET /temperature}(6,1.6);
+\draw[<-,thick,orangeiot](0,.8)--node[above]{HTTP 200 OK + dữ liệu}(6,1.3);
+\end{tikzpicture}
+\caption{Chuỗi bắt tay TCP và yêu cầu--phản hồi HTTP, dựng theo ý tưởng hình slide trang 63.}\end{figure}
+
+\subsection{TCP và UDP}
+\textbf{TCP} là giao thức hướng kết nối, sử dụng bắt tay thiết lập phiên, đánh số thứ tự, xác nhận/điều khiển truyền lại để cung cấp luồng byte tin cậy. \textbf{UDP} truyền datagram không thiết lập phiên TCP và không tự đảm bảo xác nhận, thứ tự hoặc truyền lại. Do đó TCP thường có chi phí thiết lập/trạng thái cao hơn, còn UDP thích hợp với giao thức tự quản lý độ tin cậy hoặc yêu cầu thông điệp ngắn như CoAP. Slide trang 65 minh họa TCP bằng SYN--SYN/ACK--ACK và UDP bằng các datagram yêu cầu--phản hồi không có bắt tay. Việc nói 'UDP không tin cậy' chỉ có nghĩa UDP không tự bảo đảm chuyển phát, không có nghĩa ứng dụng UDP không thể cài đặt xác nhận. \sourcepage{65}
+
+\subsection{CoAP: Constrained Application Protocol}
+CoAP là giao thức truyền tài nguyên kiểu Web thiết kế cho nút và mạng bị hạn chế về băng thông, độ sẵn sàng và tài nguyên xử lý. Nó sử dụng mô hình client/server tương tự REST/HTTP: server công bố tài nguyên qua URI, client dùng GET, POST, PUT, DELETE. Bản tin CoAP được thiết kế gọn và thường dựa trên UDP; việc xác nhận chuyển phát phải do cơ chế CoAP xử lý khi cần. \sourcepage{66}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small,box/.style={draw=navy,fill=blue!5,rounded corners,minimum width=23mm,minimum height=10mm}]
+\node[box](web) at (0,0){HTTP client};\node[box](proxy) at (4.2,0){HTTP/CoAP proxy};\node[box](sensor) at (8.8,0){Cảm biến CoAP};
+\draw[<->,thick,navy](web)--node[above]{HTTP / TCP}(proxy);
+\draw[<->,thick,teal](proxy)--node[above]{CoAP / UDP}(sensor);
+\end{tikzpicture}
+\caption{Liên kết client Web với mạng cảm biến giới hạn qua proxy CoAP (theo slide 67).}\end{figure}
+
+\paragraph{Đặc trưng CoAP.} Slide nêu năm nhóm ưu điểm: phục vụ giao tiếp M2M bị ràng buộc; trao đổi bản tin không đồng bộ; overhead thấp và dễ phân tích cú pháp; hỗ trợ URI và kiểu nội dung; hỗ trợ proxy và cache. CoAP có thể làm cầu nối với Web bằng gateway/proxy. \sourcepage{67--68}
+
+\paragraph{Bốn loại bản tin.} CoAP định nghĩa:
+\begin{enumerate}[leftmargin=2em]
+\item \textbf{Confirmable (CON):} bản tin cần ACK; nếu không nhận được sẽ có cơ chế gửi lại.
+\item \textbf{Non-confirmable (NON):} bản tin không đòi ACK ở lớp thông điệp CoAP (\emph{fire-and-forget}).
+\item \textbf{Acknowledgement (ACK):} xác nhận đã nhận bản tin CON.
+\item \textbf{Reset (RST):} từ chối/đặt lại bản tin hoặc xử lý quan sát không còn hợp lệ.
+\end{enumerate}
+
+CoAP dùng Message ID 16 bit cho ghép bản tin và phát hiện bản sao, cùng cơ chế truyền lại có back-off đối với CON. Bảo mật có thể sử dụng DTLS. \sourcepage{69}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small]
+\node at (0,4.8){Client};\node at (7,4.8){Server};
+\draw[dashed](0,4.4)--(0,.1);\draw[dashed](7,4.4)--(7,.1);
+\draw[->,thick,teal](0,3.9)--node[above]{CON, MID=0x4A51, GET}(7,3.35);
+\draw[<-,thick,orangeiot](0,2.3)--node[above]{ACK, MID=0x4A51, 2.05 Content}(7,2.9);
+\draw[->,thick,teal](0,1.7)--node[above]{NON, MID=0x4A52}(7,1.2);
+\node[align=left] at (3.5,.45){ACK cho CON; không ACK cho NON.};
+\end{tikzpicture}
+\caption{Ví dụ luồng CoAP confirmable và non-confirmable, vẽ lại theo slide trang 70--71.}\end{figure}
+
+\paragraph{Ví dụ tra cứu tài nguyên.} Các hình slide 70--71 cho thấy bản tin \texttt{CON GET /temperature} với \texttt{Token} được phản hồi bằng \texttt{ACK 2.05 Content} chứa nhiệt độ \texttt{20.1 C}, hoặc phản hồi lỗi \texttt{4.04 Not Found} khi tài nguyên không tồn tại. Hình trang 70 cũng thể hiện CON--ACK, CON--RST và NON một chiều, để làm rõ khác nhau giữa xác nhận và từ chối. \sourcepage{70--71}
+
+\subsection{MQTT: Message Queuing Telemetry Transport}
+MQTT là giao thức gửi thông điệp nhẹ, hữu ích để phân phối dữ liệu telemetry tới các client có tài nguyên và kết nối mạng hạn chế. Nó dùng mô hình publish/subscribe và rất phổ biến trong giao tiếp M2M/IoT. Thành phần trung tâm là \textbf{broker}: publisher gửi dữ liệu theo chủ đề (topic); broker xác định người đăng ký để chuyển tiếp; subscriber nhận bản tin không cần duy trì kết nối trực tiếp với từng publisher. \sourcepage{72--73}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small,box/.style={draw=navy,rounded corners,fill=blue!5,minimum height=12mm,minimum width=28mm}]
+\node[box](p) at (0,0){Publisher};\node[box,fill=cyan!15](b) at (4.5,0){MQTT Broker};
+\node[box](s1) at (9,1.4){Subscriber 1};\node[box](s2) at (9,-1.4){Subscriber 2};
+\draw[->,thick,teal](p)--node[above]{PUBLISH topic}(b);
+\draw[->,thick,orangeiot](b)--node[above,sloped]{PUBLISH}(s1);
+\draw[->,thick,orangeiot](b)--node[below,sloped]{PUBLISH}(s2);
+\end{tikzpicture}
+\caption{Kiến trúc MQTT publisher--broker--subscriber (dựng lại từ hình slide trang 73).}\end{figure}
+
+\paragraph{Bốn giai đoạn phiên MQTT.} Theo slide: (1) \textbf{Connection}: client thiết lập kết nối TCP/IP đến broker (cổng chuẩn hoặc cổng riêng do server định nghĩa); (2) \textbf{Authentication}: xác thực nếu broker yêu cầu; (3) \textbf{Communication}: publish và subscribe bản tin; (4) \textbf{Termination}: đóng phiên/kết nối. Với Client ID và thiết lập phiên thích hợp, broker có thể tiếp tục một phiên trước đó. \sourcepage{74}
+
+\paragraph{Ba mức Quality of Service (QoS).}
+\begin{table}[htbp]\centering\small
+\caption{Ba mức QoS trong MQTT (slide trang 75).}
+\begin{tabularx}{\textwidth}{p{1.4cm}p{3cm}X}\toprule
+QoS & Ý nghĩa & Đặc điểm\\\midrule
+0 & At most once (tối đa một lần) & Không bảo đảm thông điệp đến đích; không có cơ chế xác nhận chuyển phát QoS 0\\
+1 & At least once (ít nhất một lần) & Bảo đảm theo cơ chế xác nhận/gửi lại; có thể trùng lặp bản tin\\
+2 & Exactly once (đúng một lần) & Có quy trình bắt tay để bảo đảm xử lý chuyển phát đúng một lần theo ngữ nghĩa MQTT\\\bottomrule
+\end{tabularx}\end{table}
+
+\paragraph{Ví dụ ứng dụng ở thời điểm giảng dạy.} Slide nêu Facebook sử dụng MQTT trong hệ thống nhắn tin để tiết kiệm pin và truyền tin nhanh trên mạng không ổn định; đồng thời nêu các nền tảng AWS, Google Cloud, IBM Bluemix, Microsoft Azure và ThingOn IoT Platform có hỗ trợ MQTT. Những khẳng định mang yếu tố thời điểm này được giữ theo tư liệu giảng dạy, không coi là xác nhận về sản phẩm hiện tại. \sourcepage{76}
+
+\subsection{WebSocket}
+WebSocket liên quan HTTP trong bước thiết lập kết nối: trình duyệt/client thực hiện cơ chế bắt tay nâng cấp kết nối và duy trì một kênh truyền trên TCP để cả hai phía trao đổi bản tin cho đến khi đóng. So với cơ chế nhiều lượt request/response, WebSocket cho phép truyền hai chiều trên kết nối lâu dài, thuận lợi cho ứng dụng thời gian thực; slide nhận xét nó vẫn có overhead đáng kể đối với các nút IoT rất hạn chế tài nguyên. Hình trang 78 minh họa cột HTTP với những cặp request--response lặp lại so với cột WebSocket với bước handshake rồi truyền hai chiều trực tiếp. \sourcepage{77--78}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small]
+\node at (0,3.5){Client};\node at (6,3.5){Server};\draw[dashed](0,3.2)--(0,0);\draw[dashed](6,3.2)--(6,0);
+\draw[->,thick,navy](0,2.9)--node[above]{HTTP Upgrade: websocket}(6,2.65);
+\draw[<-,thick,navy](0,2.22)--node[above]{101 Switching Protocols}(6,2.5);
+\draw[->,thick,teal](0,1.6)--node[above]{Thông điệp client $\to$ server}(6,1.4);
+\draw[<-,thick,orangeiot](0,.8)--node[above]{Thông điệp server $\to$ client}(6,1.0);
+\end{tikzpicture}
+\caption{Thiết lập và truyền hai chiều với WebSocket, vẽ lại theo slide 77--78.}\end{figure}
+
+\subsection{AMQP: Advanced Message Queuing Protocol}
+AMQP là tiêu chuẩn mở thiên về giao tiếp hướng thông điệp, hỗ trợ publish/subscribe. Tương tự cách mô tả MQTT trong slide, các ứng dụng có thể sử dụng các ngữ nghĩa chuyển phát tối đa một lần, ít nhất một lần hoặc đúng một lần tùy giao thức/triển khai. Kênh TCP có thể được bảo vệ với TLS/SSL, đồng thời có cơ chế xác thực SASL. Hai thành phần cốt lõi được slide nêu:
+\begin{itemize}
+\item \textbf{Exchange:} nhận bản tin và chọn (định tuyến) queue phù hợp dựa trên các quy tắc đã đặt.
+\item \textbf{Message queue:} lưu bản tin chờ được chuyển tới phía tiêu thụ/nhận.
+\end{itemize}
+Kiến trúc này phù hợp hệ thống có xử lý hàng đợi, định tuyến thông điệp linh hoạt và tích hợp backend. \sourcepage{79}
+
+\begin{figure}[htbp]\centering
+\begin{tikzpicture}[>=Latex,font=\small,box/.style={draw=navy,rounded corners,minimum width=26mm,minimum height=10mm,fill=blue!5}]
+\node[box](p) at (0,0){Producer};\node[box](ex) at (4,0){Exchange};\node[box](q) at (8,0){Queue};\node[box](c) at (12,0){Consumer};
+\draw[->,thick,teal](p)--(ex);\draw[->,thick,teal](ex)--node[above]{Routing}(q);\draw[->,thick,teal](q)--(c);
+\end{tikzpicture}
+\caption{Luồng thông điệp cơ bản AMQP theo slide trang 79.}\end{figure}
+
+\subsection{XMPP: Extensible Messaging and Presence Protocol}
+XMPP là giao thức tiêu chuẩn hóa qua IETF để trao đổi thông tin trên Internet, hoạt động gần thời gian thực, độ trễ thấp theo bối cảnh ứng dụng và có tính độc lập nền tảng/phân tán. Theo slide, XMPP dựa trên TCP, hỗ trợ cả publish/subscribe và request/response; client kết nối tới server và trao đổi bản tin dựa trên \term{XML}{Extensible Markup Language}. Nhờ cấu trúc thông điệp mở rộng, nó có thể phục vụ ứng dụng liên lạc IoT, nhưng XML thường tạo thêm overhead so với các định dạng nhị phân nhỏ gọn. \sourcepage{80}
+
+\subsection{Bảng so sánh các giao thức dữ liệu}
+\begin{longtable}{p{1.8cm}p{3.0cm}p{2.1cm}p{4.2cm}}
+\caption{Tổng hợp từ các slide trang 56--80; một số nhận xét là phân tích hệ thống hóa.}\\
+\toprule Giao thức & Mô hình & Vận chuyển & Ghi chú trong IoT\\\midrule\endfirsthead
+\toprule Giao thức & Mô hình & Vận chuyển & Ghi chú trong IoT\\\midrule\endhead
+HTTP & Request/response, client/server & TCP & Phổ biến REST, stateless; overhead kết nối/yêu cầu có thể cao\\
+CoAP & REST, request/response; có hỗ trợ quan sát & UDP & Nhẹ, CON/NON/ACK/RST, URI, proxy/cache, DTLS\\
+MQTT & Publish/subscribe qua broker & TCP & Chủ đề, phiên, QoS 0/1/2\\
+WebSocket & Kết nối song công dài hạn & TCP & Nâng cấp từ HTTP; trao đổi hai chiều liên tục\\
+AMQP & Trao đổi thông điệp, hàng đợi & TCP & Exchange, queue, routing, TLS/SASL\\
+XMPP & Cả publish/subscribe và request/response & TCP & Bản tin XML, mở rộng, gần thời gian thực\\\bottomrule
+\end{longtable}
+
+\section{Tổng kết kiến thức và gợi ý ứng dụng}
+\begin{ghinho}[title={Những khái niệm cần phân biệt}]
+\textbf{Định danh/địa chỉ:} URI, EPC, uCode, IPv4, IPv6.\par
+\textbf{Kết nối vật lý và mạng:} PLC/X10, NFC, UWB, Wi-Fi/HaLow, BLE, Zigbee, Z-Wave, Weightless, Sigfox, LoRaWAN, Li-Fi, 3G/4G/5G, LTE-M, NB-IoT.\par
+\textbf{Bảo vệ, định tuyến:} IPsec, TLS/DTLS, IEEE 1888.3, RPL.\par
+\textbf{Kiến trúc mạng:} cellular, LAN/PAN, LPWAN, mesh.\par
+\textbf{Cách trao đổi dữ liệu:} request/response và publish/subscribe; HTTP, CoAP, MQTT, WebSocket, AMQP, XMPP.
+\end{ghinho}
+
+Một ví dụ tổng hợp: cảm biến chạy pin trong nhà có thể kết nối BLE hoặc Zigbee tới gateway; gateway kết nối Wi-Fi hoặc Ethernet lên máy chủ; dữ liệu được xuất bản qua MQTT để nhiều dịch vụ nhận cùng thời điểm. Một cảm biến cần REST tối giản có thể dùng CoAP/UDP; hệ thống Web có thể dùng HTTP để truy vấn và WebSocket để cập nhật liên tục. Nút ở vị trí xa không có Wi-Fi có thể cân nhắc LoRaWAN hoặc LTE-M/NB-IoT. Các lựa chọn này là \emph{minh họa thiết kế được suy ra từ bài học}, không phải kịch bản thí nghiệm bắt buộc trong slide.
+
+\section{Đối chiếu toàn bộ 81 trang slide}
+Bảng dưới đây xác định trang tài liệu gốc liên quan tới từng mục, để người đọc rà soát các hình và bảng của bài giảng. Trang 1 là bìa; trang 2 là mục lục; trang 81 là lời cảm ơn. Các trang mang hình không trích xuất được thành chữ được mô tả và minh họa lại trong phần tương ứng.
+\begin{longtable}{p{3.0cm}p{10cm}}
+\toprule Trang PDF & Nội dung có trong tài liệu/chương\\\midrule\endhead
+1--2 & Bìa, học phần, giảng viên, mục lục\\
+3--8 & Định nghĩa giao tiếp, H2M, M2M, M2H, H2H và các ví dụ\\
+9--10 & Tổng quan giao thức IoT; định danh nút mạng\\
+11--15 & URI/EPC/uCode; IPv4 và IPv6; hai hình so sánh địa chỉ và lợi ích IPv6\\
+16--18 & Các lợi ích của IPv6; biểu tượng các chuẩn kết nối IoT\\
+19--21 & PLC và X10; bảng thông số X10\\
+22--23 & NFC; bảng tần số, tầm xa, chế độ và mã hóa\\
+24--26 & UWB; Wi-Fi, Wi-Fi Direct và bảng tính năng Wi-Fi HaLow\\
+27--28 & BLE và bảng so sánh Bluetooth Classic/BLE\\
+29--31 & Zigbee, tính chất giao thức, hình sao--cây--mesh\\
+32--35 & Z-Wave, Weightless, Sigfox, LoRaWAN\\
+36--39 & Li-Fi, mạng tế bào, 5G, bảng 4G so với 5G\\
+40--42 & LTE-M, NB-IoT, bảng so sánh đa công nghệ vô tuyến\\
+43--46 & IPsec/TLS/DTLS/IEEE 1888.3, RPL và hai sơ đồ phân loại/định tuyến\\
+47--55 & Bốn loại mạng IoT, ví dụ cellular/LAN-PAN/LPWAN/mesh, biểu đồ tầm xa--thông lượng\\
+56--60 & Giao thức dữ liệu, đăng ký nút, publish/subscribe, request/response, liệt kê giao thức\\
+61--65 & HTTP, phương thức HTTP, hạn chế IoT, sơ đồ HTTP và TCP so với UDP\\
+66--71 & CoAP, proxy, REST, CON/NON/ACK/RST, luồng gói và ví dụ GET nhiệt độ\\
+72--76 & MQTT, kiến trúc broker, bốn giai đoạn phiên, QoS 0--2, ví dụ áp dụng\\
+77--78 & WebSocket, tương tác hai chiều và so sánh hình với HTTP\\
+79--80 & AMQP (exchanges/queues) và XMPP/XML\\
+81 & Kết thúc và lời cảm ơn\\\bottomrule
+\end{longtable}
+
+\begin{nguonslide}[title={Nguồn và phương pháp biên soạn}]
+Tài liệu chính: TS. Nguyễn Đắc Cử, \textit{Cơ sở và thiết kế hệ thống IoT -- Chapter 3: Networking technologies in IoT}, Khoa Điện -- Điện tử, Trường Đại học Phenikaa, bản PDF 81 trang. Cách trình bày ở đây là \textbf{bản tổng hợp tiếng Việt theo chủ đề} chứ không phải bản dịch đối chiếu từng trang. Các sơ đồ đã được vẽ lại, dữ liệu theo bảng slide được ghi chú riêng; những điểm không nhất quán trong slide (như đơn vị gói X10, thiết lập NFC và phạm vi cellular trong bảng so sánh) được chỉ rõ chứ không tự ý thay thế. Khi tệp PDF gốc có mặt tại \texttt{source/chapter3-slides.pdf}, có thể đối chiếu trực tiếp với bảng trang ở trên.
+\end{nguonslide}
