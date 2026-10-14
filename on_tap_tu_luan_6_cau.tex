@@ -84,3 +84,60 @@ Thách thức được slide liệt kê: kết nối Internet ở mọi nơi, ch
 \textbf{Ví dụ tưới cây thông minh:} cảm biến đo ẩm đất; ESP32 đọc và kiểm tra ngưỡng; Wi-Fi/LoRaWAN gửi bản tin về gateway hoặc server; ứng dụng hiển thị độ ẩm, cảnh báo và cho phép điều chỉnh ngưỡng; relay và bơm/van thực hiện tưới khi có lệnh hợp lệ. Phải phân tích thêm trạng thái mất mạng, sai số cảm biến, nguồn cấp và bảo vệ tránh chạy bơm quá lâu. Đây là lý do thiết kế IoT phải xem xét cả độ tin cậy lẫn chức năng.
 
 \textbf{Kết luận:} IoT là tích hợp giữa vật thể -- cảm biến -- kết nối -- xử lý -- dịch vụ -- hành động, không chỉ là một kết nối Wi-Fi. \nguon{Chương 1, trang PDF 47--49}
+
+\newpage
+\section{Câu 2. Mô hình kiến trúc phân lớp IoT bốn lớp (SoA)}
+\textbf{Đề giả định:} Trình bày mô hình kiến trúc phân lớp trong hệ thống IoT, gồm bốn lớp. \textbf{Mô hình đúng của Chương 1:} Service-Oriented Based Architecture (SoA) = Four-Layer Architecture; theo thứ tự từ dưới lên \textbf{Perception $\to$ Network $\to$ Data Processing $\to$ Application}.
+
+\begin{barem}
+\begin{enumerate}
+\item Tên mô hình, thứ tự, mục đích và luồng thông tin: 1,0 điểm.
+\item Perception/Sensor layer: 1,0 điểm.
+\item Network/Transmission layer: 1,0 điểm.
+\item Data Processing layer: 1,0 điểm.
+\item Application layer và ví dụ xuyên bốn lớp: 1,0 điểm.
+\end{enumerate}
+\end{barem}
+
+\muc{Ý 1. Sơ đồ và ý nghĩa kiến trúc bốn lớp}
+\textbf{SoA} là kiến trúc định hướng dịch vụ: các thành phần chức năng có thể kết nối với nhau thông qua giao diện và giao thức. Phân lớp tạo tính mô-đun, giảm phụ thuộc trực tiếp giữa cảm biến, mạng và ứng dụng, thuận lợi thay thế thành phần và mở rộng hệ thống. Sơ đồ:
+\[
+\fbox{Perception}\ \longrightarrow\
+\fbox{Network}\ \longrightarrow\
+\fbox{Data Processing}\ \longrightarrow\
+\fbox{Application}.
+\]
+Dữ liệu cảm biến đi từ lớp thấp lên trên; thông tin điều khiển có thể truyền ngược từ ứng dụng/xử lý xuống actuator. SoA bốn lớp khác kiến trúc IoT ba lớp (Perception--Network--Application), năm lớp (có Transport, Processing, Business) và mô hình giao thức TCP/IP bốn lớp. Một cách trình bày khác trong Chương 1 mô tả bốn \emph{khối chức năng} Things--Gateway--Cloud--Services, không được coi đó là bốn tên lớp thay thế trực tiếp SoA. \nguon{Chương 1, trang PDF 23--28 và 34--39}
+
+\muc{Ý 2. Perception Layer -- lớp cảm nhận}
+\textbf{Nhiệm vụ:} nhận biết vật thể IoT và thu thập trạng thái môi trường vật lý/hóa học; chuyển các đại lượng đo sang tín hiệu hoặc dữ liệu điện tử để lớp khác xử lý. Lớp này gồm cảm biến nhiệt, ẩm, áp suất, ánh sáng, chuyển động, RFID, vi điều khiển hoặc mạch thu nhận liên quan. Cơ cấu chấp hành có thể được gắn tại nút thiết bị để nhận lệnh thay đổi môi trường.
+
+\textbf{Đặc điểm:} các cảm biến khác nhau về dải đo, nguyên lý, độ chính xác, điện áp, công suất, chuẩn giao tiếp, tốc độ lấy mẫu; do đó phải nhận diện đúng loại và cách đọc dữ liệu. Chú ý sai số, nhiễu, giới hạn pin và điều kiện lắp đặt. Ví dụ cảm biến đo độ ẩm đất đổi độ ẩm thành tín hiệu có thể đọc; đầu ra được gắn với danh tính thiết bị và chuyển tới lớp mạng. Đây là lớp tạo \emph{dữ liệu gốc từ thế giới thực}. \nguon{Chương 1, trang PDF 36; Chương 2, trang PDF 4--12}
+
+\muc{Ý 3. Network Layer -- lớp mạng/truyền dẫn}
+\textbf{Nhiệm vụ:} làm cầu nối giữa các thiết bị/lớp cảm nhận với nền tảng xử lý; vận chuyển dữ liệu đo và lệnh điều khiển; liên kết các thiết bị và các mạng khác nhau. Các chức năng gắn với kết nối IoT có thể bao gồm định danh, địa chỉ hóa, định tuyến, chuyển đổi giao thức, kết nối qua gateway và cơ chế bảo vệ phù hợp.
+
+\textbf{Công nghệ điển hình:} Wi-Fi và Ethernet (LAN), BLE và Zigbee (cự ly ngắn), LoRaWAN và Sigfox (LPWAN), NB-IoT và LTE-M (mạng di động IoT), cùng PLC truyền trên đường dây điện. Chọn mạng theo \emph{khoảng cách, tốc độ, độ trễ, năng lượng, chi phí hạ tầng/thuê bao, topology và độ tin cậy}. Ví dụ thiết bị Zigbee có thể gửi dữ liệu tới một gateway rồi dùng TCP/IP qua Ethernet để chuyển về server. Không gán MQTT là công nghệ vô tuyến thay Wi-Fi: MQTT là giao thức ứng dụng dữ liệu. \nguon{Chương 1, trang PDF 25 và 36; Chương 3, trang PDF 19--43}
+
+\muc{Ý 4. Data Processing Layer -- lớp xử lý dữ liệu}
+\textbf{Theo chính slide SoA:} lớp xử lý nhận thông tin thu được từ lớp cảm nhận và có trách nhiệm kiểm tra việc dữ liệu được chuyển từ đối tượng/người dùng hợp lệ, bảo vệ khỏi các mối đe dọa. Trong một thiết kế IoT hoàn chỉnh, lớp này còn có thể \emph{tập hợp, lọc, làm sạch, chuẩn hóa, lưu trữ và phân tích} dữ liệu; tạo thông tin cho ứng dụng, thực hiện các quy tắc logic.
+
+\textbf{Triển khai khả dĩ:} gateway có khả năng edge computing, broker MQTT, cơ sở dữ liệu, chương trình server, dịch vụ cloud hoặc mô hình phân tích AI nếu cần. Ví dụ MCU gửi \texttt{soil=18\%}; lớp xử lý kiểm tra ID và thời điểm đo, loại mẫu lỗi, lưu dữ liệu, so ngưỡng độ ẩm và sinh sự kiện khô đất. Thách thức: xử lý nhiều nút đồng thời, độ trễ, dữ liệu thiếu/lặp, bảo mật và quyền truy cập.
+
+\textbf{Phân biệt nguồn:} chức năng xác thực và bảo vệ được nêu trực tiếp ở slide Chương 1, trang PDF 35; các chi tiết broker, CSDL và quy tắc là ví dụ \emph{mở rộng khi phân tích một giải pháp thực tế}, không phải yêu cầu mọi hệ thống phải dùng tất cả chúng. \nguon{Chương 1, trang PDF 35; Chương 2, trang PDF 3}
+
+\muc{Ý 5. Application Layer -- lớp ứng dụng và ví dụ xuyên lớp}
+\textbf{Nhiệm vụ:} cung cấp dịch vụ cụ thể dựa trên dữ liệu IoT, giao diện người dùng, API, dashboard, cảnh báo, báo cáo hoặc lệnh điều khiển. Bài giảng nhấn mạnh lớp ứng dụng xác định những ứng dụng IoT triển khai và cung cấp dịch vụ dựa trên thông tin đã thu thập.
+
+\textbf{Phân tích đủ bốn lớp bằng ví dụ tưới tự động:}
+\begin{enumerate}
+\item \emph{Perception:} cảm biến đo độ ẩm; van điện là phần tử tác động.
+\item \emph{Network:} ESP32/gateway đưa dữ liệu qua Wi-Fi hoặc LoRaWAN tới nền tảng.
+\item \emph{Data Processing:} xác thực nút, lọc và lưu độ ẩm, so ngưỡng, sinh trạng thái cần tưới.
+\item \emph{Application:} giao diện điện thoại hiển thị đồ thị, cảnh báo và nhận lệnh bật/tắt tưới; lệnh đi ngược về thiết bị.
+\end{enumerate}
+\textbf{Kết luận:} Perception trả lời \emph{đo cái gì}; Network trả lời \emph{dữ liệu đi thế nào}; Data Processing trả lời \emph{xử lý ra thông tin gì}; Application trả lời \emph{người dùng nhận giá trị/dịch vụ gì}. \nguon{Chương 1, trang PDF 34--36}
+
+\begin{luuy}
+Không đổi tên bốn lớp SoA thành Link--Internet--Transport--Application: đó là ngăn xếp giao thức TCP/IP, thuộc một kiểu phân lớp \textbf{khác}. Không đưa Business vào SoA bốn lớp chỉ vì bài giảng cũng có kiến trúc năm lớp.
+\end{luuy}
