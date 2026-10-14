@@ -46,5 +46,6 @@ jobs:
           git add chapter3.pdf
           if ! git diff --cached --quiet; then
             git commit -m "Build Chapter 3 illustrated PDF with LuaLaTeX"
+            git pull --rebase origin main
             git push
           fi
