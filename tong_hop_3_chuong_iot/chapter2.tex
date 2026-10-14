@@ -1,0 +1,314 @@
+% =============================================================
+% CHƯƠNG 2 — PHẦN CỨNG IoT
+% Module độc lập: nhập vào tài liệu chính bằng \input{chapter2}
+% Nguồn: Chapter 2_IoT Hardware(2).pdf (79 trang)
+% Không chứa nội dung Chương 1 hay Chương 3.
+% Sử dụng LuaLaTeX; main.tex khai báo fontspec, babel, pdfpages,
+% graphicx, tikz, tcolorbox, listings và các macro cho hình.
+% =============================================================
+\chapter{Phần cứng IoT (IoT Hardware)}\label{chap:iot-hardware}
+\begin{concept}
+\textbf{Phạm vi Chương 2:} (1) Cảm biến và phân loại cảm biến; (2) cơ cấu chấp hành; (3) nút cảm biến và sơ đồ phần cứng; (4) vi điều khiển ATmega/Arduino cùng kiến thức lập trình; (5) ESP8266 và ESP32; (6) Intel Edison; (7) điện toán biên và Raspberry Pi; (8) so sánh nền tảng. Nội dung được diễn giải sang tiếng Việt và đánh dấu số trang slide gốc nhằm dễ kiểm chứng. Phụ lục cuối chương giữ nguyên \textbf{toàn bộ 79 trang slide}, bao gồm ảnh, sơ đồ chân, ảnh màn hình IDE và bảng biểu.
+\end{concept}
+\section{Bối cảnh: kiến trúc phần cứng của hệ thống IoT}
+Hình ở trang 3 trình bày chuỗi \emph{Things / IoT Devices} (các thiết bị vật lý), \emph{Edge} (điện toán biên), \emph{Network Connectivity} (liên kết mạng) và \emph{Cloud} (đám mây). Về phía phần cứng, thiết bị cảm nhận hoặc tác động lên môi trường; một bo mạch vi điều khiển hay máy tính nhúng thực hiện xử lý; phần giao tiếp mạng trao đổi dữ liệu với biên và đám mây. Các minh họa trong slide đưa ra bo mạch và gateway thuộc nhiều loại khác nhau; không nhất thiết mọi hệ thống phải có tất cả các tầng riêng biệt.
+\slidefig{3}{Kiến trúc thiết bị IoT, biên và đám mây}
+\section{Cảm biến (Sensors)}
+\subsection{Khái niệm và vai trò}
+Cảm biến là phần tử cơ bản, thiết yếu của hệ thống IoT, tạo cầu nối giữa thế giới thực và hệ điện tử. Nó đo một đại lượng vật lý, hóa học hoặc sinh học rồi biến đổi thành một tín hiệu mà con người hay thiết bị điện tử có thể đọc. Tín hiệu -- thường là tín hiệu điện -- sau đó được phân tích, xử lý, lưu trữ và truyền đi bằng phương tiện có dây hoặc không dây.
+
+Nếu gọi \(m\) là đại lượng đo và \(s\) là tín hiệu điện đầu ra, quan hệ chuyển đổi được viết:
+\begin{equation}\boxed{s=f(m).}\end{equation}
+Vì \(f\) mô tả đặc tính chuyển đổi của cảm biến, một phép đo cần quan tâm cả đại lượng đầu vào lẫn cách ánh xạ sang tín hiệu điện; slide không đưa ra hàm hiệu chuẩn cụ thể cho từng cảm biến.\slidesource{4}
+\subsection{Các loại cảm biến minh họa}
+Hai trang ảnh giới thiệu những ví dụ sau; các tên được chuẩn hóa tiếng Việt và giữ thuật ngữ gốc để thuận tiện tìm linh kiện.
+\begin{longtable}{p{.31\linewidth}p{.60\linewidth}}
+\toprule\textbf{Tên trong slide} & \textbf{Đại lượng / chức năng tương ứng}\\\midrule\endhead
+Temperature sensor & Cảm biến nhiệt độ.\\
+Soil moisture sensor & Cảm biến độ ẩm đất.\\
+Humidity sensor & Cảm biến độ ẩm môi trường.\\
+Infrared sensor; IR optical sensor & Cảm biến hồng ngoại; cảm biến quang hồng ngoại.\\
+Gas sensor; alcohol sensor & Cảm biến khí; cảm biến hơi cồn.\\
+CO\(_2\) sensor & Cảm biến nồng độ khí carbon dioxide.\\
+Digital push button & Nút nhấn số, cung cấp trạng thái đóng/ngắt để làm tín hiệu vào.\\
+Ultrasonic sensor & Cảm biến siêu âm.\\
+LDR sensor & Quang trở, thay đổi điện trở theo ánh sáng.\\
+Gyroscope sensor & Cảm biến tốc độ góc / con quay hồi chuyển.\\
+Rain sensor & Cảm biến mưa.\\
+Photodiode & Điốt quang.\\
+IR proximity sensor; proximity sensor & Cảm biến tiệm cận hồng ngoại; cảm biến tiệm cận nói chung.\\
+PIR sensor & Cảm biến hồng ngoại thụ động phát hiện biến thiên bức xạ hồng ngoại.\\\bottomrule
+\end{longtable}
+\slidesource{5--6}
+\slidefig{5}{Ví dụ cảm biến nhiệt độ, độ ẩm, khí, hồng ngoại và nút nhấn}
+\slidefig{6}{Bộ sưu tập cảm biến cồn, siêu âm, quang, mưa, tiệm cận, PIR và con quay hồi chuyển}
+\subsection{Phân loại theo cách cảm nhận: chủ động và thụ động}
+\textbf{Cảm biến tích cực / chủ động (active sensor)} theo cách dùng của bài giảng là loại cần nguồn năng lượng hoặc tín hiệu kích thích từ bên ngoài để thực hiện phép đo. Radar phát sóng vô tuyến, sonar/siêu âm phát sóng âm đến vật thể và nhận phản xạ để xác định khoảng cách. Bài giảng còn liệt kê camera video như ví dụ cảm biến tích cực.\slidesource{7}
+
+\textbf{Cảm biến thụ động (passive sensor)} theo cách trình bày của bài giảng không cần cấp năng lượng kích thích cho chính cơ chế chuyển đổi. \emph{Cặp nhiệt điện} sinh điện áp nhiệt điện khi có chênh lệch nhiệt độ; \emph{cảm biến áp suất} có thể sử dụng màng hoặc vật liệu áp điện tạo ra dịch chuyển/điện áp do tác dụng của áp suất.\slidesource{8}
+\begin{noteiot}
+Khái niệm chủ động/thụ động ở đây dựa theo cách phân loại trong slide. Khi thiết kế mạch thực tế phải phân biệt \emph{năng lượng kích thích phần tử đo} và \emph{nguồn nuôi toàn bộ mô-đun}; mô-đun có vi mạch xử lý có thể cần cấp nguồn dù phần tử nhạy có cơ chế thụ động.
+\end{noteiot}
+\subsection{Phân loại theo đại lượng và cơ chế biến đổi}
+Ngoài chủ động/thụ động, bài giảng nêu cách phân nhóm theo đối tượng và phương tiện phát hiện (điện, sinh học, hóa học, phóng xạ, v.v.) hoặc hiện tượng chuyển đổi (quang điện, nhiệt điện, sinh học, hóa học, phóng xạ). Các ví dụ theo đại lượng gồm vị trí, nhiệt độ, áp suất, tốc độ, độ ẩm và màu sắc. Đây là các trục phân loại khác nhau, có thể đồng thời mô tả một cảm biến.\slidesource{7--9}
+\subsection{Cảm biến tương tự và cảm biến số}
+\textbf{Cảm biến tương tự (analog sensor)} tạo tín hiệu có thể biến thiên liên tục trong miền giá trị hoạt động; ví dụ trong slide gồm gia tốc kế, cảm biến ánh sáng, âm thanh, áp suất, nhiệt độ. \textbf{Cảm biến số (digital sensor)} cung cấp giá trị rời rạc hoặc dữ liệu đã số hóa. Bài giảng mô tả cảm biến số được kết hợp với \emph{bộ chuyển đổi tương tự--số} (ADC), còn cảm biến tương tự không tích hợp ADC ở ngõ ra; ví dụ cảm biến gia tốc số, nhiệt độ số DS1620 và HYT~271, cảm biến độ ẩm số. Slide lưu ý nhóm cảm biến số có thể bị giới hạn dải tính toán/đo, đồng thời đưa ví dụ về cách diễn giải đầu ra nhiệt độ.
+
+Phân biệt thêm \emph{tín hiệu số hai mức} (logic HIGH/LOW, ví dụ nút nhấn) với \emph{dữ liệu số nhiều bit} (ví dụ nhiệt độ đọc qua giao tiếp số). Trên slide 10, hình tín hiệu số minh họa các xung nhị phân mức 0/1, còn hình tương tự biểu diễn sóng biến thiên liên tục.\slidesource{9--12}
+\slidefig{10}{So sánh tín hiệu tương tự liên tục và tín hiệu nhị phân}
+\section{Cơ cấu chấp hành (Actuators)}
+\subsection{Định nghĩa và ví dụ}
+Cơ cấu chấp hành nhận tín hiệu điều khiển -- chẳng hạn tín hiệu điện từ một bộ điều khiển -- và biến đổi thành tác động đối với vật lý bên ngoài: chuyển động cơ học, biến thiên nhiệt độ, ánh sáng hoặc các dạng năng lượng khác. Bài giảng đưa ví dụ \emph{động cơ bước}: động cơ quay từng góc xác định tương ứng chuỗi xung điều khiển; động cơ bước thích hợp khi yêu cầu điều khiển chính xác vị trí, như cánh tay rô-bốt. Các hình còn cho thấy động cơ DC, màn hình LCD, LED, cơ cấu tuyến tính, ma trận LED và còi/buzzer, qua đó thể hiện cơ cấu chấp hành không chỉ giới hạn ở động cơ quay.\slidesource{13--14}
+\slidefig{14}{Ví dụ các cơ cấu chấp hành điện--cơ, hiển thị và âm thanh}
+\subsection{So sánh cảm biến và cơ cấu chấp hành}
+\begin{center}\begin{tabularx}{\linewidth}{>{\bfseries}p{.22\linewidth}XX}\toprule & Cảm biến & Cơ cấu chấp hành\\\midrule
+Chức năng & Chuyển đại lượng vật lý thành tín hiệu đo/điện & Chuyển lệnh hoặc tín hiệu điện thành tác động vật lý\\
+Vị trí trong điều khiển & Đầu vào của bộ điều khiển & Đầu ra của bộ điều khiển\\
+Ví dụ & Công tắc, micro, cảm biến quay & LED, loa/buzzer, bộ điều khiển động cơ, laser\\\bottomrule\end{tabularx}\end{center}
+Một vòng lặp điều khiển điển hình: \emph{môi trường} \(\rightarrow\) \emph{cảm biến} \(\rightarrow\) \emph{bộ điều khiển} \(\rightarrow\) \emph{cơ cấu chấp hành} \(\rightarrow\) \emph{môi trường}.\slidesource{15}
+\section{Nút cảm biến IoT (IoT Sensor Node)}
+Trong trang 16, bài giảng minh họa cách ghép nhóm \emph{Sensors + Boards + Connectivity} thành \emph{IoT Sensor Nodes}; có ví dụ cảm biến, các bo xử lý, mô-đun truyền thông và bo lắp ráp cuối cùng. Trang 17 đưa sơ đồ khối chi tiết: cảm biến thông minh, cảm biến số, cảm biến video/môi trường; chuyển đổi ADC; MCU; các bộ nhớ flash/RAM; cấp nguồn, DC/DC, quản lý pin; mô-đun truyền thông không dây (Wi-Fi, Bluetooth, IEEE 802.15.4) hoặc có dây. Sơ đồ chỉ ra MCU đóng vai trò phối hợp lấy mẫu, giao tiếp, xử lý và truyền dữ liệu.
+\begin{center}\begin{tikzpicture}[node distance=8mm and 7mm, box/.style={draw=navy,rounded corners,fill=blue!4,align=center,minimum height=11mm,minimum width=21mm,font=\footnotesize}, >={Latex}]
+\node[box] (s) {Cảm biến};\node[box,right=of s] (adc) {Điều hòa\ tín hiệu / ADC};\node[box,right=of adc] (m) {MCU / CPU};\node[box,right=of m] (n) {Kết nối\ mạng};\node[box,below=of m] (mem) {RAM / Flash};\node[box,below=of adc] (p) {Nguồn, pin,\ DC/DC};
+\draw[->] (s)--(adc);\draw[->](adc)--(m);\draw[<->](m)--(n);\draw[<->](m)--(mem);\draw[->](p)--(adc);\draw[->](p.east) -| (m.south);
+\end{tikzpicture}\end{center}
+\slidefig{17}{Sơ đồ khối nguyên bản của một nút cảm biến IoT}
+\section{Vi điều khiển và ATmega328P}
+\subsection{Khái niệm microcontroller}
+\emph{Microcontroller} (MCU) là một vi mạch tích hợp (IC), có thể hiểu như máy tính thu nhỏ gồm bộ xử lý, bộ nhớ và khối vào/ra. MCU có thể lập trình và được thiết kế cho các ứng dụng nhúng. Trang 18 minh họa các vi mạch Intel P8051, Hitachi HD68000, Motorola MC68HC000LC8. Cần phân biệt \emph{chip MCU} với \emph{bo phát triển} chứa MCU cùng mạch nguồn, giao tiếp và chân cắm.\slidesource{18}
+\subsection{Đặc điểm của ATmega328P}
+\begin{longtable}{p{.46\linewidth}p{.45\linewidth}}\toprule\textbf{Thông số được nêu trong slide} & \textbf{Giá trị}\\\midrule\endhead
+Họ vi điều khiển & AVR 8 bit, hiệu năng cao, công suất thấp\\
+Flash chương trình & 32 KB\\
+SRAM & 2 KB\\
+EEPROM & 1 KB\\
+Đường I/O có thể lập trình & 23\\
+Điện áp hoạt động & 1,8--5,5 V\\
+Dải nhiệt độ & $-40$ đến $85\,^{\circ}\mathrm C$\\
+Dòng chế độ Active & 0,2 mA (điều kiện cụ thể không được slide nêu)\\
+Dòng chế độ Power-down & 0,1 $\mu$A (điều kiện cụ thể không được slide nêu)\\
+Dòng chế độ Power-save & 0,75 $\mu$A (điều kiện cụ thể không được slide nêu)\\\bottomrule\end{longtable}
+Hình trang 19 trình bày sơ đồ chân ATmega328P dạng DIP-28, với các nhóm chân: cấp nguồn VCC/AVCC/GND, RESET, dao động XTAL, chân PORTB/PORTC/PORTD, ADC, UART, SPI, I\(^{2}\)C và các chức năng ghép kênh. Trang 21 cho ví dụ mạch lập trình/chuyển chương trình vào chip, đầu nối và bảng pin của giao thức ISP/SPI.\slidesource{19--21}
+\slidefig{19}{Sơ đồ 28 chân ATmega328P và các chức năng ghép kênh}
+\section{Nền tảng Arduino}
+\subsection{Khái quát và lịch sử}
+Arduino là nền tảng điện tử \emph{mã nguồn mở} bao gồm cả phần cứng và phần mềm, hướng tới tính dễ dùng. Theo bài giảng, dự án hình thành năm 2003 tại Interaction Design Institute Ivrea (Ý) cho sinh viên; tên gọi bắt nguồn từ quán bar nơi nhóm sáng lập gặp nhau, quán được đặt theo Arduin of Ivrea. Phần cứng ban đầu do Smart Projects tại Ý sản xuất; một số bo mang thương hiệu Arduino được thiết kế bởi các đơn vị khác như SparkFun và Adafruit.\slidesource{22}
+
+Ưu điểm được liệt kê gồm giá thành thấp, đa nền tảng, môi trường lập trình đơn giản, phần mềm mở và phần cứng mở. Các hình giới thiệu họ bo Arduino có nhiều kiểu dáng/kích thước, không phải một bộ xử lý đơn nhất.\slidesource{23--24,31}
+\subsection{Arduino Uno và sơ đồ chức năng}
+Arduino Uno sử dụng \emph{ATmega328P}, được Arduino.cc phát triển; có 14 chân I/O số và 6 đầu vào analog. Bo có thể lập trình trong Arduino IDE qua cáp USB Type-B; bootloader được nạp sẵn giúp tải chương trình mà không cần thiết bị nạp phần cứng ngoài.
+
+Mười khu vực được chỉ ra trên ảnh bo Uno: (1) các chân digital; (2) LED trên pin 13; (3) LED báo nguồn; (4) ATmega; (5) chân analog; (6) GND và 5V; (7) đầu nối nguồn; (8) LED TX/RX; (9) cổng USB; (10) nút RESET. Sơ đồ pinout ở trang 27 minh họa quan hệ \emph{chân vật lý ATmega328P -- ký hiệu Port -- chức năng Arduino -- đầu vào ADC và các chức năng ngoại vi}.\slidesource{25--27}
+\slidefig{26}{Sơ đồ mười khu vực trên bo Arduino Uno}
+\slidefig{27}{Bản đồ chân ATmega328P trong hệ Arduino}
+\subsection{Các mẫu bo: Leonardo, Mega, Nano}
+\begin{longtable}{>{\raggedright\arraybackslash}p{.28\linewidth}p{.20\linewidth}p{.22\linewidth}p{.20\linewidth}}\toprule\textbf{Thông số} & \textbf{Leonardo} & \textbf{Mega} & \textbf{Nano}\\\midrule\endhead
+Vi điều khiển & ATmega32U4 & ATmega2560 & ATmega328\\
+Điện áp hoạt động & 5 V & 5 V & 5 V\\
+Điện áp vào khuyến nghị & 7--12 V & 7--12 V & 7--12 V\\
+Giới hạn điện áp vào & 6--20 V & 6--20 V & Không ghi trong slide\\
+I/O số & 23 & 54 & 22 (6 PWM)\\
+Kênh analog & 12 & 16 & 8\\
+Flash & 32 KB, trong đó 4 KB cho bootloader & 256 KB & 32 KB\\
+SRAM & 2,5 KB & 8 KB & 2 KB\\
+EEPROM & 1 KB & 4 KB & 1 KB\\
+Dòng I/O nêu trong slide & 40 mA & 40 mA & Không ghi\\
+Dòng chân 3,3 V nêu trong slide & 50 mA & 50 mA & Không ghi\\
+Kích thước & 68,6 $\times$ 53,3 mm & Không ghi & 18 $\times$ 45 mm\\
+Khối lượng & 20 g & Không ghi & 7 g\\
+Thông số bổ sung & -- & -- & 19 mA (tiêu thụ theo slide)\\\bottomrule\end{longtable}
+Các mức dòng trong bảng được tái hiện theo slide để phục vụ đối chiếu, không thay thế cho giới hạn thiết kế điện và khuyến cáo của datasheet.\slidesource{28--30}
+\subsection{Các lựa chọn ngoài Arduino và shield mở rộng}
+Trang 32--34 trình bày \emph{LaunchPad MSP430, Particle Photon, NodeMCU ESP8266, SparkFun Thing Plus, Adafruit Feather HUZZAH, BeagleBoard/PocketBeagle, Seeeduino Nano, SparkFun RedBoard Artemis, STM32F3 Discovery}. Đây là các nền tảng hoặc bo có thể dùng cho nguyên mẫu IoT, không nhất thiết tương thích về phần cứng hay công cụ lập trình.
+
+\emph{Arduino Shield} là bo cắm chồng lên PCB Arduino để bổ sung chức năng, được thiết kế theo hệ chân và triết lý dễ lắp, dễ tháo, dễ sản xuất chi phí thấp. Hình minh họa cho thấy các shield hiển thị, kết nối, nguyên mẫu và mở rộng giao tiếp. Bộ \emph{Arduino Starter Kit} trong trang 36 tập hợp bo mạch, breadboard, linh kiện rời, dây cắm và phụ kiện điện tử.\slidesource{32--36}
+\slidefig{34}{Các bo phát triển thay thế được bài giảng liệt kê}
+\slidefig{35}{Các dạng Arduino Shield mở rộng}
+\subsection{Breadboard và nguyên mẫu}
+\emph{Breadboard} là bảng cắm mạch thử nghiệm không cần hàn, thích hợp kiểm chứng nhanh mạch điện và thiết kế trước khi chế tạo PCB. Trang 37 minh họa Arduino nối một LED và điện trở trên breadboard; cần kiểm tra hướng kết nối, hàng/cột chân nối thông và điện trở giới hạn dòng.\slidesource{37}
+\slidefig{37}{Mô hình thử nghiệm Arduino với breadboard}
+\section{Môi trường và ngôn ngữ lập trình Arduino}
+\subsection{Arduino Sketch và Arduino Desktop IDE}
+\emph{Sketch} là tên Arduino dùng cho một chương trình, tức đơn vị mã nguồn được biên dịch, nạp và chạy trên bo. Ngôn ngữ Arduino dựa trên các hàm C/C++. Trang 38 mô tả một sketch mẫu và cách tổ chức chương trình thành \texttt{setup()} chạy khởi tạo và \texttt{loop()} thực thi lặp.
+
+Arduino Desktop IDE hỗ trợ Windows, macOS, Linux. Trang 39 dẫn các hướng dẫn cài đặt của Arduino cho từng hệ điều hành, kèm lưu ý cách cài bằng \texttt{sudo apt-get install arduino} trên Linux không được bài giảng khuyến nghị. Trang 40 giới thiệu giao diện IDE, nơi viết sketch, xác minh/biên dịch, chọn bo/cổng giao tiếp, nạp và theo dõi cửa sổ Serial Monitor.\slidesource{38--40}
+\slidefig{40}{Giao diện Arduino IDE trong slide gốc}
+\subsection{Chú thích chương trình (comments)}
+Chú thích được trình biên dịch bỏ qua, dùng để giải thích ý nghĩa mã lệnh. Trang 41 minh họa hai dạng:
+\begin{lstlisting}[language=C++]
+/* Day la chu thich nhieu dong.
+   Cac dong nay duoc bo qua. */
+// Day la chu thich mot dong.
+\end{lstlisting}
+\noindent Lưu ý: chú thích nhiều dòng theo cú pháp \texttt{/* ... */} không được viết lồng nhau; dấu \texttt{//} dùng cho chú thích một dòng.
+\subsection{Cấu trúc điều khiển: for, if, while, do--while}
+\paragraph{Vòng lặp for (slide 42).} Lặp khối câu lệnh giữa ngoặc nhọn với bộ đếm thường gồm ba biểu thức khởi tạo, điều kiện, bước cập nhật. Biến đếm có thể tăng hoặc giảm.
+\begin{lstlisting}[language=C++]
+for (int i = 0; i <= 10; i++) {
+  Serial.write(7);
+}
+\end{lstlisting}
+\paragraph{Rẽ nhánh if (slide 43).} Kiểm tra biểu thức điều kiện; nếu đúng thì thực hiện nhánh \texttt{if}, nếu sai có thể thực hiện \texttt{else}. Bài giảng minh họa kiểm tra nhiệt độ so với ngưỡng \(70\), đồng thời liệt kê các toán tử \texttt{==}, \texttt{!=}, \texttt{<}, \texttt{<=}, \texttt{>}, \texttt{>=}. Cần phân biệt \texttt{=} (gán) và \texttt{==} (so sánh bằng).
+\begin{lstlisting}[language=C++]
+if (temperature > 70) {
+  // Xu ly khi cao hon nguong
+} else {
+  // Xu ly khi khong cao hon nguong
+}
+\end{lstlisting}
+\paragraph{Vòng lặp while (slide 44).} Lặp khi điều kiện vẫn đúng; kiểm tra điều kiện trước vòng lặp. \texttt{do\{...\}while(...);} thực hiện thân lặp ít nhất một lần rồi mới kiểm tra điều kiện.
+\begin{lstlisting}[language=C++]
+int var = 0;
+while (var < 200) { var++; }
+
+do { var++; } while (var < 400);
+\end{lstlisting}
+\slidesource{41--44}
+\subsection{Hàm đọc và ghi tín hiệu số}
+\texttt{pinMode(pin, mode)} thiết lập chân làm đầu vào hoặc đầu ra (trong slide: \texttt{INPUT}, \texttt{OUTPUT}). \texttt{digitalRead(pin)} đọc trạng thái logic \texttt{HIGH}/\texttt{LOW}. \texttt{digitalWrite(pin, value)} xuất logic \texttt{HIGH} hoặc \texttt{LOW} ra một chân đã được cấu hình phù hợp. Tham số \texttt{pin} là số hiệu chân digital cần tác động, \texttt{value} là mức logic yêu cầu.\slidesource{45}
+\begin{lstlisting}[language=C++]
+const int LED_PIN = 13;
+void setup() { pinMode(LED_PIN, OUTPUT); }
+void loop() {
+  digitalWrite(LED_PIN, HIGH);
+  delay(1000);
+  digitalWrite(LED_PIN, LOW);
+  delay(1000);
+}
+\end{lstlisting}
+\subsection{Tín hiệu tương tự và PWM}
+\texttt{analogRead(pin)} đọc đầu vào ADC (slide mô tả bộ chuyển đổi 10 bit). \texttt{analogWrite(pin, value)} xuất \emph{điều chế độ rộng xung} PWM lên chân hỗ trợ; giá trị duty trong ví dụ Arduino nằm trong khoảng 0--255, tương ứng thời gian xung ở mức cao trong mỗi chu kỳ, chứ không phải một đầu ra điện áp DAC lý tưởng. Hình trang 46 biểu diễn dạng sóng PWM có độ rộng khác nhau.\slidesource{46}
+\slidefig{46}{Sơ đồ minh họa nguyên lý PWM và các giá trị analog của Arduino}
+\subsection{Các hàm toán học thông dụng}
+\begin{longtable}{p{.26\linewidth}p{.64\linewidth}}\toprule\textbf{Hàm} & \textbf{Tác dụng theo bài giảng}\\\midrule\endhead
+\texttt{abs(x)} & Trả về trị tuyệt đối.\\
+\texttt{constrain(x,a,b)} & Giới hạn \(x\) trong đoạn từ \(a\) đến \(b\).\\
+\texttt{max(x,y)} & Chọn giá trị lớn nhất.\\
+\texttt{min(x,y)} & Chọn giá trị nhỏ nhất.\\
+\texttt{pow(base,exponent)} & Lũy thừa \(\mathrm{base}^{\mathrm{exponent}}\).\\
+\texttt{sq(x)} & Bình phương \(x\).\\
+\texttt{sqrt(x)} & Căn bậc hai \(\sqrt{x}\).\\\bottomrule\end{longtable}
+\slidesource{47}
+\subsection{Trì hoãn và chỉ thị tiền xử lý}
+\texttt{delay(milliseconds)} tạm dừng chương trình trong khoảng thời gian tính theo mili-giây, \(1000\,\mathrm{ms}=1\,\mathrm{s}\). \texttt{\#define} đặt tên hằng hoặc macro trước khi chương trình được biên dịch, ví dụ \texttt{\#define ledPin 3}. \texttt{\#include} thêm tiêu đề thư viện, ví dụ \texttt{\#include <SPI.h>}; nhờ đó sketch truy cập các hàm, lớp và định nghĩa đã được thư viện cung cấp.\slidesource{48--49}
+\begin{lstlisting}[language=C++]
+#define ledPin 3
+#include <SPI.h>
+\end{lstlisting}
+\subsection{Hai hàm chính setup() và loop()}
+\texttt{setup()} được gọi một lần mỗi khi khởi động hoặc reset để thiết lập chân, Serial, thư viện và các trạng thái ban đầu. \texttt{loop()} được gọi lặp liên tục sau khi \texttt{setup()} hoàn tất, là nơi đặt chương trình chính xử lý tín hiệu và điều khiển thiết bị. Slide 50 dùng \texttt{pinMode(8, INPUT)} minh họa thao tác khởi tạo; slide 51 minh họa dùng \texttt{digitalRead(8)} và ghi chữ qua Serial theo trạng thái nút nhấn.\slidesource{50--51}
+\begin{lstlisting}[language=C++]
+void setup() {
+  pinMode(8, INPUT);
+  Serial.begin(9600);
+}
+void loop() {
+  if (digitalRead(8) == HIGH) {
+    Serial.write('H');
+  } else {
+    Serial.write('L');
+  }
+}
+\end{lstlisting}
+\subsection{Thêm thư viện và giao tiếp Serial}
+Trang 52 minh họa thao tác \emph{Sketch > Include Library} trong Arduino IDE. Các thư viện có thể đi kèm IDE hoặc được thêm bởi người dùng. Cổng COM là tên truyền thống của cổng giao tiếp nối tiếp trên máy tính tương thích IBM PC, ngày nay còn bao gồm cổng nối tiếp ảo thông qua Bluetooth hoặc cầu USB-to-UART. Arduino thường cung cấp ít nhất một cổng nối tiếp, một số bo có nhiều cổng. Trên Arduino Uno, \textbf{pin 0 là RX và pin 1 là TX}; người lập trình thường dùng \texttt{Serial.begin(speed)} khởi tạo với tốc độ baud và \texttt{Serial.write(value)} ghi dữ liệu ra cổng; baud là số ký hiệu truyền mỗi giây (bài giảng mô tả gần đúng theo bit/giây).\slidesource{52--53}
+\slidefig{52}{Thao tác thêm thư viện trong Arduino IDE}
+\section{Nền tảng Wi-Fi ESP8266}
+\subsection{Tổng quan ESP8266EX và khả năng phần mềm}
+ESP8266EX là chip Wi-Fi chi phí thấp của Espressif Systems, tích hợp giao thức TCP/IP và có thể ghép vào các thiết kế dùng vi điều khiển. Phần lõi hỗ trợ Arduino của ESP8266 cung cấp thư viện Wi-Fi cho TCP, UDP, HTTP, mDNS, SSDP, máy chủ DNS; cho phép cập nhật firmware qua mạng (OTA), hệ thống tệp trên flash hoặc SD, điều khiển servo và trao đổi SPI/I\(^{2}\)C. Slide 55 liệt kê các biến thể mô-đun ESP-01, ESP-02, ESP-03, ESP-04, ESP-05, ESP-06, ESP-07, ESP-08, ESP-09, ESP-10, ESP-11, ESP-12, ESP-13.\slidesource{54--55}
+\slidefig{55}{Tập hợp biến thể mô-đun ESP8266}
+\subsection{ESP-01 và ESP-07}
+\begin{longtable}{p{.34\linewidth}p{.57\linewidth}}\toprule\textbf{Mô-đun} & \textbf{Đặc điểm được cung cấp trong slide}\\\midrule\endhead
+ESP-01 & Kích thước $24{,}75\times14{,}5$ mm; nguồn 3,3 V; anten mạch in tích hợp; LED nguồn và TXD; chế độ AP, STA, AP+STA; có thể điều khiển bằng lệnh AT; khoảng cách chân 2,54 mm.\\
+ESP-07 & Nguồn 3,3 V; anten gốm tích hợp và đầu nối anten ngoài U.FL; Wi-Fi 802.11b/g/n băng 2,4 GHz với WPA/WPA2; TCP/UDP; hỗ trợ lệnh AT; khoảng cách chân 2 mm.\\\bottomrule\end{longtable}
+\slidesource{56--57}
+\slidefig{56}{Sơ đồ chân, module ESP-01 và đặc điểm ngoại hình}
+\slidefig{57}{Sơ đồ chân ESP-07 trong bài giảng}
+\subsection{SDK của Espressif và môi trường thay thế}
+Bài giảng nêu năm 2014 Espressif giới thiệu SDK cho phép ESP8266 chạy như vi điều khiển độc lập thay vì chỉ là mô-đun Wi-Fi của MCU khác. Hai nhánh SDK được nhắc đến là \emph{ESP8266 NonOS SDK} và \emph{ESP8266 RTOS SDK}. Các môi trường hoặc SDK thay thế trên slide gồm ESP-Open-SDK, Unofficial Development Kit, Arduino, ESP8266 BASIC, ESP Easy và ESPHome.\slidesource{58}
+\subsection{Cấu hình ESP8266 trên Arduino IDE}
+Ba trang hướng dẫn tuần tự: \textbf{(1)} vào \emph{File > Preferences} và thêm URL gói bo \url{http://arduino.esp8266.com/stable/package_esp8266com_index.json}; \textbf{(2)} vào \emph{Tools > Board > Boards Manager}, tìm ``esp8266'' và chọn \emph{Install}; \textbf{(3)} vào \emph{Tools > Board} chọn \emph{Generic ESP8266 Module} nếu đúng loại mô-đun cần sử dụng. Các ảnh minh họa trong slide là giao diện IDE tại thời điểm biên soạn; vị trí menu có thể khác ở bản IDE mới.\slidesource{59--61}
+\slidefig{59}{Thêm liên kết JSON của gói bo ESP8266}
+\slidefig{60}{Cài gói hỗ trợ ESP8266 qua Boards Manager}
+\slidefig{61}{Chọn bo Generic ESP8266 Module}
+\section{Nền tảng ESP32}
+ESP32 là họ \emph{system-on-chip} giá tương đối thấp do Espressif phát triển, là bước tiến so với họ ESP8266. Slide giới thiệu khả năng đa lõi, đồng xử lý tiết kiệm năng lượng và hỗ trợ kết nối Wi-Fi, Bluetooth. Những thiết bị minh họa gồm ESP32 Development Board, ESP32-CAM, ESP32-WROOM-32U/-32D, DOIT DevKit V1, ESP32 DevKit, ESP32S NodeMCU, ESP32 Thing, Wemos Lolin32, Wemos OLED và HUZZAH32.
+
+Các \textbf{ưu điểm theo slide}: CPU dual-core khoảng 160--240 MHz; Wi-Fi/Bluetooth tiện cho điều khiển và giám sát; số chân GPIO nhiều hơn ESP8266; slide ghi tốc độ tối đa 150 Mb/s. \textbf{Nhược điểm theo slide}: giá cao hơn ESP8266. Thông số là mô tả cho các phiên bản ESP32 được trình bày trong bài giảng, không đại diện cho mọi biến thể ESP32. Đặc biệt, ảnh trang 64 minh họa pinout bo DOIT ESP32 DevKit V1 loại 30 chân, gồm các chân cấp nguồn, EN, chân UART, ADC, digital GPIO, SPI và I\(^{2}\)C tùy cấu hình.\slidesource{62--65}
+\slidefig{63}{Một số bo ESP32 được giới thiệu trong slide}
+\slidefig{64}{Sơ đồ chân bo DOIT ESP32 DevKit V1 (30 GPIOs theo tiêu đề slide)}
+\section{Nền tảng Intel Edison}
+\subsection{Cấu hình mô-đun Edison}
+Intel Edison trong bài giảng có kích thước $35{,}5\times25\times3{,}9$ mm, linh kiện gắn ở hai mặt. SoC Intel Atom Tangier Z34XX tiến trình 22 nm tích hợp hai lõi Silvermont 500 MHz và một lõi Intel Quark ở 100 MHz (đơn vị trong slide không ghi đầy đủ tại dòng này); RAM 1 GB và eMMC 4 GB; có Wi-Fi, Bluetooth 4, điều khiển USB. Kết nối ra ngoài qua đầu nối Hirose DF40 mật độ cao 70 chân (USB, SD, UART, GPIO). Các môi trường lập trình nêu trong slide: Arduino IDE, Eclipse (C, C++, Python), Intel XDK (NodeJS/HTML5).\slidesource{66}
+\slidefig{66}{Mô-đun Intel Edison và cấu hình phần cứng}
+\subsection{Bo breakout và bo dạng Arduino cho Edison}
+\textbf{Breakout board}: xuất các mức I/O gốc 1,8 V của Edison ra các điểm hàn dạng lưới 0,1 inch; có USB OTG Micro Type-AB, công tắc nguồn OTG, bộ sạc pin, cầu USB--UART qua Micro-USB, đầu cấp nguồn DC 7--15 V. Điện áp I/O 1,8 V là thông tin quan trọng khi giao tiếp với ngoại vi.
+
+\textbf{Arduino board for Edison Module}: 20 I/O số (6 PWM), 6 đầu vào analog, 1 UART, 1 I\(^{2}\)C, đầu ICSP 6 chân cho SPI, cổng Micro-USB device hoặc cổng USB host Type-A chọn qua công tắc cơ, cổng Micro-USB UART, khe SD và đầu nguồn DC 7--15 V.\slidesource{67--68}
+\slidefig{67}{Intel Edison Breakout Board}
+\slidefig{68}{Bo tương thích bố cục Arduino cho Edison}
+\section{Điện toán biên (Edge Computing)}
+Slide 69 trình bày sự khác nhau về vị trí xử lý giữa đám mây, trung tâm dữ liệu doanh nghiệp và biên gần thiết bị; trang 70 nhấn mạnh \emph{xử lý thông tin nhạy cảm với độ trễ}, \emph{quyền riêng tư và an ninh}, \emph{băng thông và chất lượng kết nối}. Trang 71 mô tả dữ liệu do thiết bị IoT tạo ra được xử lý một phần ở máy hoặc gateway gần nguồn, trong khi đám mây và trung tâm dữ liệu tiếp tục thực hiện các công việc ở quy mô lớn. Khác với gửi tất cả dữ liệu thô lên cloud, cách bố trí này có thể giảm lượng dữ liệu truyền và cho phép đưa ra quyết định cục bộ.
+
+Các \textbf{thiết bị biên} minh họa trang 72 gồm Raspberry Pi, NVIDIA Jetson Nano và NVIDIA Jetson Xavier. Liên kết tham khảo trên slide: \url{https://www.networkworld.com/article/3224893/what-is-edge-computing-and-how-it-s-changing-the-network.html}.\slidesource{69--72}
+\slidefig{69}{Quan hệ giữa cloud, edge gateway và trung tâm dữ liệu}
+\slidefig{71}{Sơ đồ hoạt động của điện toán biên}
+\slidefig{72}{Các máy tính biên: Raspberry Pi và NVIDIA Jetson}
+\section{Máy tính đơn bo Raspberry Pi}
+\subsection{Khái quát}
+Raspberry Pi là dòng \emph{single-board computers} (SBC), tức máy tính tích hợp phần lớn thành phần trên một bo mạch nhỏ gọn. Theo số liệu lịch sử \textbf{được trích trong slide}, đến tháng 2/2015 hơn 5 triệu máy Raspberry Pi đã được bán, trở thành máy tính Anh bán chạy nhất thời điểm đó. Dòng bo do Raspberry Pi Foundation phát triển nhằm khuyến khích học khoa học máy tính cơ bản trong trường học và tại những quốc gia đang phát triển. Slide nêu các bo có Wi-Fi/Bluetooth tích hợp; khả năng này tùy theo phiên bản thực tế. Hình trang 73 minh họa các dự án robot và bộ phụ kiện Raspberry Pi.\slidesource{73--74}
+\slidefig{73}{Hệ sinh thái thiết bị và ứng dụng Raspberry Pi}
+\subsection{Bộ kit nhập môn}
+Trang 75 liệt kê các thành phần: bo Raspberry Pi, thẻ microSD dung lượng \textbf{8 GB trở lên} theo slide, bộ cấp nguồn, bàn phím/chuột USB, màn hình có ngõ HDMI, cáp HDMI và hộp vỏ bảo vệ. Thẻ microSD làm bộ nhớ khởi động và lưu hệ điều hành đối với các cấu hình được minh họa trong bài giảng.\slidesource{75}
+\slidefig{75}{Bộ kit Raspberry Pi gồm bo, microSD, nguồn và ngoại vi}
+\subsection{Cấu tạo và chân Raspberry Pi 4}
+Trang 76 chỉ các phần \textbf{USB-C power}, \textbf{micro-HDMI} (hai đầu ra), \textbf{Ethernet Gigabit}, cổng \textbf{USB 3.0/2.0}, header GPIO 40 chân và lựa chọn RAM 2/4/8 GB trong hình. Trang 77 chứa bảng pinout 40 chân: nguồn 3,3 V, 5 V, GND, các chân GPIO và các chân chức năng SPI/UART/I\(^{2}\)C. Khi đấu nối phải đối chiếu số thứ tự chân vật lý (physical pin) và tên GPIO/BCM, tránh cấp 5 V vào tín hiệu GPIO không chịu 5 V.\slidesource{76--77}
+\slidefig{76}{Các cổng kết nối và khu vực chính của Raspberry Pi 4}
+\slidefig{77}{Sơ đồ chân header 40 pin Raspberry Pi 4}
+\section{So sánh Arduino Uno và Raspberry Pi 4}
+\begin{longtable}{p{.38\linewidth}p{.26\linewidth}p{.26\linewidth}}\toprule\textbf{Tiêu chí trong bài giảng} & \textbf{Arduino Uno} & \textbf{Raspberry Pi 4}\\\midrule\endhead
+Loại nền tảng & Vi điều khiển (microcontroller) & Máy vi tính (microcomputer)\\
+Hệ điều hành & Không chạy hệ điều hành đa nhiệm thông dụng & Có thể chạy hệ điều hành\\
+Đa nhiệm & Slide ghi ``No multitasking'' & Có đa nhiệm\\
+Giá thành tương đối & Rẻ & Đắt hơn\\
+Tài nguyên & Xung 16 MHz, SRAM 2 KB & Xung khoảng 1,5 GHz, RAM 2/4/8 GB\\
+Ứng dụng thời gian thực & Được slide đánh giá là thích hợp & Slide đánh giá không lý tưởng cho thời gian thực cứng\\
+Kết nối mạng tích hợp & Slide ghi không có kết nối mạng & Có khả năng kết nối mạng\\
+ADC tích hợp trên bo & Có & Slide ghi không có bộ chuyển đổi A/D\\\bottomrule\end{longtable}
+Dòng so sánh phản ánh \textbf{đúng hai bo được nêu trong slide 78}, không phải khẳng định cho toàn bộ họ Arduino và Raspberry Pi. Một số chức năng có thể mở rộng bằng shield, HAT hoặc IC ngoài; với Raspberry Pi, yêu cầu đo analog thường cần thêm ADC bên ngoài.\slidesource{78}
+\slidefig{78}{Bảng so sánh Arduino Uno và Raspberry Pi 4 nguyên bản}
+\section{Bảng tra cứu tương ứng với toàn bộ 79 slide}
+\begin{longtable}{p{.15\linewidth}p{.76\linewidth}}\toprule\textbf{Trang PDF} & \textbf{Chủ đề và hình minh họa được lưu trong phụ lục gốc}\\\midrule\endhead
+1--3 & Bìa giảng viên, mục lục chương và kiến trúc Cloud--Edge--IoT Devices.\\
+4--6 & Khái niệm cảm biến, hàm chuyển đổi, ảnh mô-đun cảm biến đa dạng.\\
+7--12 & Chủ động/thụ động; phân loại theo hiện tượng và analog/digital; dạng sóng; cảm biến tương tự và cảm biến số.\\
+13--15 & Cơ cấu chấp hành, hình các thiết bị đầu ra, so sánh cảm biến/cơ cấu chấp hành.\\
+16--17 & Phân rã phần cứng nút IoT và sơ đồ khối IoT Sensor Node.\\
+18--21 & Khái niệm MCU, chip ATmega328P, cấu hình và bộ nạp.\\
+22--27 & Lịch sử/ưu điểm Arduino, bo Uno, các vùng chức năng và pinout ATmega328P.\\
+28--31 & Arduino Leonardo, Mega, Nano và ảnh các biến thể Arduino.\\
+32--35 & Bo thay thế Arduino và shield mở rộng.\\
+36--40 & Starter Kit, breadboard, Arduino Sketch, cài đặt và giao diện Arduino IDE.\\
+41--44 & Comment và cấu trúc \texttt{for}, \texttt{if}, \texttt{while}, \texttt{do--while}.\\
+45--48 & Digital I/O, Analog I/O và PWM, hàm toán học và delay.\\
+49--53 & \texttt{\#define}, \texttt{\#include}, \texttt{setup()}, \texttt{loop()}, thư viện và Serial.\\
+54--58 & ESP8266, các biến thể mô-đun, đặc điểm ESP-01, ESP-07, SDK.\\
+59--61 & Quy trình cài đặt board ESP8266 trong Arduino IDE với ảnh các bước.\\
+62--65 & ESP32, các bo ESP32, sơ đồ chân DOIT và ưu/nhược điểm.\\
+66--68 & Intel Edison, bo breakout và bo giao tiếp phong cách Arduino.\\
+69--72 & Điện toán biên, mô hình hoạt động và các bo edge devices.\\
+73--77 & Raspberry Pi, bộ kit, sơ đồ các cổng và pinout Pi 4.\\
+78--79 & So sánh Uno và Pi 4, lời kết.\\\bottomrule\end{longtable}
+\section{Kết luận Chương 2}
+Phần cứng IoT được tổ chức xung quanh \emph{cảm biến} (thu nhận dữ liệu), \emph{cơ cấu chấp hành} (tạo tác động), \emph{bộ điều khiển/tính toán} (quản lý, xử lý, điều khiển), \emph{giao diện I/O}, \emph{khối nguồn} và \emph{khối truyền thông}. Với các tác vụ điều khiển nhúng, Arduino/ATmega và ESP8266/ESP32 là những ví dụ tiêu biểu của MCU. Với các tác vụ cần hệ điều hành, đa nhiệm, xử lý ở biên và giao tiếp phần mềm đa dạng, Raspberry Pi hoặc một bo công nghiệp có thể phù hợp hơn. Intel Edison được bài giảng dùng làm minh họa một kiến trúc mô-đun máy tính nhúng kết hợp nhiều giao diện ngoại vi.
+
+\textbf{Điểm cần ghi nhớ:} lựa chọn không chỉ theo xung CPU, mà theo số chân, điện áp I/O, ADC, dung lượng RAM/Flash, giao tiếp không dây, nguồn, phần mềm công cụ và độ trễ xử lý mong muốn. Các ví dụ, bảng chân và ảnh cấu trúc ở phụ lục giúp đối chiếu thông tin thực tế của chính từng bo, không phải thông số chuẩn cho toàn bộ họ chip.
+\ifdefined\iotstandalone
+\clearpage
+\appendix
+\chapter{Phụ lục: 79 trang slide Chương 2 nguyên bản}
+Phụ lục đính kèm \textbf{đầy đủ 79 trang} tài liệu do người học cung cấp, nhằm bảo toàn các ảnh chụp phần cứng, sơ đồ chân, bảng so sánh, ví dụ mã và ảnh giao diện mà phần diễn giải bằng chữ không thể thay thế hoàn toàn. Bố cục slide gốc không bị chỉnh sửa. Khi ghép các chương, có thể bỏ qua phụ lục bằng cách không sao chép đoạn \texttt{\textbackslash includepdf} bên dưới.
+\IfFileExists{assets/chapter2_original_slides.pdf}{%
+  \includepdf[pages=1-79,fitpaper=false,offset=0 0,pagecommand={},width=.95\paperwidth]{assets/chapter2_original_slides.pdf}%
+}{\begin{noteiot}Không có tệp \texttt{assets/chapter2\_original\_slides.pdf} trong thư mục dự án. Module \texttt{chapter2.tex} vẫn chứa các phần diễn giải và bảng tra cứu; để hiện ảnh slide nguyên bản hãy đặt PDF nguồn tại vị trí này rồi biên dịch lại.\end{noteiot}}
+\fi % Phụ lục gốc chỉ xuất hiện khi biên dịch riêng Chương 2.

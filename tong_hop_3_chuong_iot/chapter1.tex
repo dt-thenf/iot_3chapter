@@ -1,0 +1,269 @@
+% chapter1.tex: chỉ chứa nội dung Chương 1; không có \documentclass/\begin{document}.
+% Biên dịch bằng lualatex chapter1_main.tex hai lượt.
+% Các macro có tiền tố chone tránh xung đột khi ghép với chương khác.
+\providecommand{\chonesourcepage}[1]{\hfill{\footnotesize\color{gray}(Nguồn: slide Chương 1, #1)}}
+\providecommand{\choneemph}[1]{\textcolor{iotblue}{\textbf{#1}}}
+\providecommand{\choneslidefigure}[2]{\begin{figure}[H]\centering\IfFileExists{assets/chapter1/slide#1.jpg}{\includegraphics[width=0.91\linewidth]{assets/chapter1/slide#1.jpg}}{\parbox{.85\linewidth}{\centering Hình nguồn slide #1; chạy script extract\_chapter1\_slides.py.}}\caption{#2 (slide #1 của bài giảng gốc).}\end{figure}}
+\chapter{Tổng quan về Internet vạn vật (IoT)}\label{chap:overview}
+\noindent\textbf{Nguồn cơ sở:} 50 slide ``Chapter 1: An overview of IoT'', học phần \emph{Cơ sở và thiết kế hệ thống IoT} của TS. Nguyễn Đắc Cử, Khoa Điện -- Điện tử, Trường Đại học Phenikaa. Nội dung dưới đây được diễn giải lại bằng tiếng Việt và đối chiếu với từng slide. Phần hình từ slide được đặt cạnh nội dung tương ứng; các biểu đồ dự báo mang tính lịch sử được ghi đúng bối cảnh nguồn.\par
+\medskip
+\noindent\textbf{Sáu nhóm kiến thức của chương} (slide 2): Giới thiệu học phần; lịch sử Internet và IoT; các khái niệm IoT; kiến trúc IoT; ứng dụng IoT; thách thức và cơ hội của IoT.
+
+\section{Giới thiệu học phần}\label{sec:course}
+\subsection{Thông tin học phần và phạm vi nghiên cứu}
+Tên tiếng Việt là \emph{Cơ sở và thiết kế hệ thống IoT}; tên tiếng Anh \emph{IoT System Design}; mã học phần \textbf{EEE703006}. Trọng tâm của môn học là các khái niệm IoT, nền tảng phần cứng, phần mềm ứng dụng, các cơ chế xử lý dữ liệu và thông tin, cũng như các công nghệ/giao thức truyền thông được nêu trong slide: \textbf{Zigbee, Bluetooth, IEEE 802.15.4, IEEE 802.15.6 và IEEE 802.15.11}. Dòng ``Syllabus: Click here'' trong slide 3 là liên kết giáo trình/đề cương trên bản trình chiếu; bản trích xuất PDF không cho biết nội dung đích nên không suy diễn. \chonesourcepage{3}
+
+\subsection{Quy định học tập và thời khóa biểu được ghi trong slide}
+Các yêu cầu học tập: tham dự tối thiểu \textbf{80\%} số buổi học trên lớp; tham dự \textbf{100\%} buổi thực hành; hoàn thành các nhiệm vụ của học phần. Thời khóa biểu dưới đây được giữ \emph{nguyên thông tin lịch sử của lớp năm 2022}, không phải lịch hiện hành.\chonesourcepage{4}
+\begin{table}[H]\centering\small
+\caption{Thời khóa biểu trong tài liệu gốc (slide 4).}
+\begin{tabularx}{\linewidth}{@{}l l l l l X@{}}\toprule
+Hình thức & Mã lớp & Thời gian & Thứ & Tiết & Phòng\\\midrule
+Lý thuyết & IoT-1-1-22(N01) & 15/08--27/11/2022 & Hai & 10, 11 & A3-302\\
+Thực hành & IoT-1-1-22(N01.TH1) & 19/09--27/11/2022 & Năm & 4, 5, 6 & A4-503\\
+Thực hành & IoT-1-1-22(N01.TH2) & 19/09--27/11/2022 & Bảy & 1, 2, 3 & A4-503\\\bottomrule
+\end{tabularx}\end{table}
+
+\section{Lịch sử Internet và sự hình thành IoT}\label{sec:history}
+\subsection{Khái niệm Internet vạn vật và bước chuyển của máy tính}
+\emph{Internet of Things (IoT)} -- Internet vạn vật hay mạng lưới vạn vật kết nối Internet -- là hệ thống các thiết bị tính toán có liên hệ với nhau, trong đó các vật thể, động vật hay con người có thể được gắn mã nhận dạng riêng, có khả năng thu nhận và trao đổi thông tin qua mạng mà không cần con người trực tiếp tham gia vào mọi lần tương tác giữa người--người hoặc người--máy. Định nghĩa này xuất hiện hai lần trong slide 5 và 12, nhằm nhấn mạnh đặc tính \emph{định danh, kết nối, trao đổi dữ liệu và tự động hóa giao tiếp}. \chonesourcepage{5, 12}
+\choneslidefigure{05}{Hình cây kết nối các biểu tượng thiết bị và dịch vụ, mô tả ý tưởng Internet vạn vật}
+
+\subsection{Bốn giai đoạn phát triển Internet}
+Các slide 6--7 mô tả sự phát triển của Internet theo bốn giai đoạn với tác động xã hội, kinh doanh và mức độ liên kết thông minh tăng dần:
+\begin{enumerate}
+\item \choneemph{Connectivity -- Digitize Access (Kết nối, số hóa truy cập):} kết nối con người tới thư điện tử (email), trình duyệt/dịch vụ Web và công cụ tìm kiếm để tiếp cận thông tin.
+\item \choneemph{Networked Economy -- Digitize Business (Kinh tế nối mạng, số hóa kinh doanh):} xuất hiện thương mại điện tử, chuỗi cung ứng số và cộng tác qua mạng nhằm cải thiện hiệu quả quy trình kinh doanh.
+\item \choneemph{Immersive Experiences -- Digitize Interactions (Trải nghiệm phong phú, số hóa tương tác):} video, mạng xã hội, tính di động và kết nối thường xuyên trở nên phổ biến; ngày càng nhiều ứng dụng chuyển lên đám mây.
+\item \choneemph{Internet of Things -- Digitize the World (Internet vạn vật, số hóa thế giới thực):} các đối tượng, thiết bị và máy móc trước đây chưa kết nối được gắn thêm khả năng liên lạc, mở ra dịch vụ và trải nghiệm mới; liên kết con người, quy trình, dữ liệu và vạn vật.
+\end{enumerate}
+Sơ đồ tại slide 6 thể hiện trục hoành là mức độ \emph{kết nối thông minh (intelligent connections)}, trục tung là \emph{tác động tới kinh doanh và xã hội}, được biểu diễn bằng bốn cột tăng dần. Slide 7 có bảng định nghĩa từng giai đoạn.\chonesourcepage{6--7}
+\choneslidefigure{06}{Bốn giai đoạn phát triển của Internet và tác động kinh tế--xã hội}
+
+\subsection{Từ tiền Internet đến Internet of Things}
+Sơ đồ mở rộng tại slide 8 trình bày thêm tiến trình \emph{Pre-Internet} (người tới người), \emph{Internet of Content / WWW} (nội dung), \emph{Internet of Services / Web 2.0} (dịch vụ), \emph{Internet of People / Social Media} (con người) và \emph{Internet of Things / Machine-to-Machine} (máy tới máy). Các ví dụ tiêu biểu lần lượt là:
+\begin{itemize}
+\item Trước Internet: điện thoại cố định/di động, SMS; phát triển mạng thông minh.
+\item Internet nội dung: email, thông tin, giải trí; nền tảng và dịch vụ CNTT thông minh.
+\item Internet dịch vụ: năng suất điện tử và thương mại điện tử; điện thoại và ứng dụng thông minh.
+\item Internet con người: Skype, Facebook, YouTube, Twitter; thiết bị thông minh, đối tượng và thẻ định danh.
+\item Internet vạn vật: định danh, theo dõi, giám sát, đo lường; dữ liệu chia sẻ được tổ chức theo ngữ nghĩa, kết hợp dữ liệu và ngữ cảnh môi trường.
+\end{itemize}
+\choneslidefigure{08}{Sơ đồ các giai đoạn từ Pre-Internet tới Internet of Things}
+
+\subsection{Các cột mốc lịch sử và đóng góp của các nhà nghiên cứu}
+Theo slide 9, thời kỳ IoT được nhiều tài liệu gọi là giai đoạn bắt đầu khoảng \textbf{2008--2009}; song thuật ngữ \emph{Internet of Things} được ghi nhận từ \textbf{1999}, do \textbf{Kevin Ashton} sử dụng khi làm việc tại \textbf{Procter \& Gamble (P\&G)}. Ý tưởng ban đầu gắn kết quản lý chuỗi cung ứng với Internet: dùng \emph{RFID -- Radio Frequency Identification} (nhận dạng bằng sóng vô tuyến), nhãn và mã vạch để theo dõi vật phẩm, qua đó cải thiện hiệu quả quản lý. Hai mốc này không đồng nghĩa: một mốc nói về tên gọi, mốc còn lại nói về thời kỳ phổ biến của IoT.\chonesourcepage{9}
+
+Tại slide 10, Kevin Ashton nhấn mạnh rằng trong thế kỷ XX máy tính giống như ``bộ não không có giác quan'' và phụ thuộc dữ liệu do con người nhập (gõ bàn phím, quét mã vạch, v.v.). IoT chuyển trọng tâm sang \emph{thiết bị có thể tự cảm nhận thế giới thực}. Ông lập luận trong bài viết đăng trên \emph{RFID Journal} ngày \textbf{22/06/2009} rằng nếu máy tính biết về đồ vật nhờ dữ liệu thu thập tự động, chúng ta có thể theo dõi và kiểm đếm tốt hơn, giảm lãng phí, thất thoát và chi phí, nhận biết lúc cần thay, sửa, thu hồi hoặc khi vật phẩm mất độ tươi mới. Đây là nội dung diễn giải ý chính của trích dẫn trong slide, không phải nguyên văn tiếng Anh.\chonesourcepage{10}
+
+Slide 11 bổ sung: năm \textbf{1999}, \textbf{Neil Gershenfeld} xuất bản cuốn \emph{When Things Start to Think} (slide ghi ``When Everything Started Thinking''); bối cảnh là viễn cảnh đồ vật cùng sử dụng Internet. Slide xem \textbf{máy ATM năm 1974} là một trong những đối tượng thông minh kết nối mạng đầu tiên, đồng thời nhắc máy bán nước ngọt có kết nối Internet tại Khoa Khoa học Máy tính, \textbf{Carnegie Mellon University} vào \textbf{1980}. Khoảng \textbf{2010}, thuật ngữ \emph{Industrial Internet of Things -- IIoT} được nhấn mạnh trong công nghiệp. Slide còn đề xuất rằng ``Network/Net'' có thể mô tả kết nối rộng hơn ``Internet'', liên hệ tới tên gọi \emph{Internet of Everything} hoặc \emph{Net of Everything}. \emph{Lưu ý biên soạn:} tên sách được ghi theo slide và đồng thời nêu tên xuất bản phổ biến để người học có thể đối chiếu.\chonesourcepage{11}
+
+\section{Khái niệm, đối tượng và môi trường thông minh}\label{sec:concepts}
+\subsection{IoT là mạng lưới các ``things'' kết nối}
+Slide 13 diễn giải IoT như việc kết nối thiết bị (ví dụ thiết bị có nút bật/tắt) với Internet và với các thiết bị khác. Các thực thể trong mạng -- cả đồ vật và con người -- có thể thu thập/chia sẻ dữ liệu về cách chúng được sử dụng và về môi trường xung quanh. Cách diễn đạt ``thiết bị có nút bật/tắt'' là ví dụ khái quát từ nguồn, không phải điều kiện kỹ thuật bắt buộc đối với mọi nút IoT. Hình minh họa tại đây liệt kê những lĩnh vực như phương tiện, năng lượng, giao thông, quản lý môi trường, sinh hoạt và ứng dụng dịch vụ.\chonesourcepage{13}
+\choneslidefigure{13}{Đồ vật, con người và các lĩnh vực được kết nối thành Internet vạn vật}
+
+\subsection{Phạm vi của một IoT Thing}
+Ví dụ slide 14 gồm: người mang thiết bị cấy ghép theo dõi tim mạch, động vật nông nghiệp được gắn bộ phát đáp/chip sinh học, ô tô có cảm biến cảnh báo áp suất lốp thấp. Nhiều đối tượng tự nhiên hoặc nhân tạo có thể được định danh trên mạng (slide lấy ví dụ địa chỉ IP) và gửi dữ liệu qua Internet. Các đồ vật IoT vì vậy đa dạng về \emph{kích thước, cấu trúc, mục đích, cơ chế kết nối và đối tượng được theo dõi}. \chonesourcepage{14}
+\choneslidefigure{14}{Ví dụ thiết bị theo dõi tim, ô tô gắn cảm biến và các đối tượng IoT}
+
+\subsection{Smart Object -- Đối tượng thông minh}
+\textbf{Smart Object (SO)} là đối tượng vật lý được tích hợp các thành phần xử lý, lưu trữ, cảm biến và kết nối mạng. Một số SO còn có thể \emph{tác động ngược lại} môi trường qua \textbf{bộ chấp hành (actuator)}. Cách biểu diễn phần cứng tại slide 16 chỉ ra các khối: cảm biến (nhận tín hiệu như độ sáng, nhiệt độ, áp suất), actuator, bộ xử lý công suất thấp, khối truyền thông, nguồn điện; trong đó dữ liệu cảm biến được bộ xử lý thu thập, xử lý và truyền tới thiết bị khác, còn actuator thực thi lệnh để thay đổi trạng thái vật lý.\chonesourcepage{15--16}
+\choneslidefigure{16}{Cấu trúc đối tượng thông minh với cảm biến, cơ cấu chấp hành, xử lý, liên lạc và nguồn}
+
+Từ hình tròn tại slide 15 có thể đọc các ý: \emph{data processing} (xử lý dữ liệu), \emph{communication} (truyền thông), \emph{power and battery} (nguồn và pin), \emph{environmental sensing} (cảm nhận môi trường), \emph{actuation} (tác động môi trường). Đây là các năng lực liên kết quanh SO.\chonesourcepage{15}
+
+\subsection{Xu hướng phát triển của Smart Object}
+Theo slide 17, năm xu thế chính là: (1) kích thước thiết bị nhỏ dần; (2) điện năng tiêu thụ giảm; (3) năng lực xử lý tăng; (4) chất lượng, khả năng truyền thông được cải thiện; và (5) giao tiếp ngày càng được chuẩn hóa. Các xu thế phối hợp khiến đối tượng thông minh được sử dụng linh hoạt hơn trong thiết bị thông thường.\chonesourcepage{17}
+
+\subsection{Smart Environment -- Môi trường thông minh}
+\textbf{Smart Environment (SE)} là phạm vi không gian vật lý nơi các SO được triển khai, kết nối và tương tác. Nhiều SO trong một không gian như xe, nhà hoặc đô thị kết hợp thành \emph{smart car, smart home, smart city}. Slide 18 trích dẫn ý tưởng của \textbf{Mark Weiser (1999)}: cảm biến, cơ cấu chấp hành và thiết bị tính toán đan xen, gần như vô hình trong đồ vật hằng ngày, kết nối liên tục; cách nói này nhấn mạnh công nghệ được tích hợp vào chính môi trường sống thay vì một máy tính riêng lẻ. Hình minh họa đặt \emph{Smart Space} ở giữa, kết nối SO và con người.\chonesourcepage{18}
+\choneslidefigure{18}{Môi trường thông minh gồm các đối tượng SO và con người trong cùng không gian}
+
+\subsection{Ubiquitous Computing -- Điện toán khắp nơi}
+\textbf{Ubiquitous Computing (Ubicomp)} là mô hình điện toán hiện diện rộng khắp: một người có thể đồng thời tương tác với nhiều máy tính nhỏ, kết nối lẫn nhau, nằm trong các vật dụng hoặc môi trường hằng ngày và có thể ít được nhận thấy như một máy tính độc lập. Slide 19 coi \textbf{Mark Weiser} là người đặt nền tảng khái niệm này; hình liên hệ điện toán khắp nơi với \emph{computer}, \emph{pervasive computing}, \emph{wearables} và \emph{smart devices}.\chonesourcepage{19}
+\choneslidefigure{19}{Quan hệ giữa điện toán khắp nơi, thiết bị đeo và thiết bị thông minh}
+
+\subsection{Các khái niệm liên quan: M2M, IIoT, Industry 4.0}
+\textbf{M2M -- Machine-to-Machine Communication}: các máy hoặc thiết bị trao đổi thông tin với nhau mà không cần người trực tiếp điều khiển mỗi lần truyền. Hình ở slide 20 đối chiếu M2M kết nối trực tiếp theo cặp với một hệ IoT dùng đám mây/nền tảng để phối hợp nhiều thiết bị. M2M là khái niệm liên quan mật thiết nhưng không đồng nhất với toàn bộ hệ sinh thái IoT.\chonesourcepage{20}
+
+\textbf{IIoT -- Industrial Internet of Things}: IoT được triển khai trong hệ thống công nghiệp, với thiết bị, công nhân, cảm biến, máy móc, hệ thống điều khiển, nhà máy và nền tảng dữ liệu được kết nối nhằm giám sát, phối hợp và tối ưu vận hành. Hình slide 21 biểu diễn hệ thống công nghiệp có các thiết bị, dây chuyền, đám mây và dữ liệu kết nối hai chiều.\chonesourcepage{21}
+
+\textbf{Industry 4.0 -- Công nghiệp 4.0}: hình slide 22 liên hệ \emph{Industrial IoT, Network Centric, Industrial Apps, Quality, Safety, Automation, Monitoring Tools, Sensors}. Như vậy IIoT là một thành tố của bức tranh công nghiệp số rộng hơn, không phải tên khác hoàn toàn tương đương với Industry 4.0.\chonesourcepage{22}
+\choneslidefigure{20}{Hình so sánh mạng truyền thông M2M và mô hình IoT}
+\choneslidefigure{22}{Các yếu tố trong hệ sinh thái Industry 4.0}
+
+\section{Kiến trúc hệ thống IoT}\label{sec:architecture}
+\subsection{Bốn khối chức năng cơ bản}
+Theo slide 23, kiến trúc tổng quát có bốn khối \textbf{Things -- Gateway/Network -- Cloud -- Services}; hình còn thể hiện \emph{User Interface} (giao diện người dùng) liên kết ở phía ứng dụng. Luồng cơ bản: thiết bị đo đạc và điều khiển $\leftrightarrow$ cổng mạng/gateway $\leftrightarrow$ đám mây $\leftrightarrow$ dịch vụ và giao diện. Dữ liệu, lệnh điều khiển có thể đi hai chiều.\chonesourcepage{23}
+\choneslidefigure{23}{Quan hệ giữa thiết bị, gateway, cloud, dịch vụ và giao diện người dùng}
+
+\subsection{Things -- Thiết bị/nút IoT}
+Thiết bị gồm \textbf{cảm biến}, \textbf{bộ chấp hành} và \textbf{bộ điều khiển}: bộ vi xử lý hoặc vi điều khiển, \emph{PLC (Programmable Logic Controller)}, \emph{FPGA (Field-Programmable Gate Array)} cho tới máy tính nhúng. Nhiệm vụ là đo, thu thập thông tin thế giới thực, điều khiển cơ cấu chấp hành và truyền/nhận dữ liệu với các thiết bị khác. Dữ liệu tầng thiết bị là đầu vào nền tảng của toàn hệ thống. Công nghệ bán dẫn mở ra cảm biến thông minh rất nhỏ; ví dụ cảm biến \emph{nhiệt độ, áp suất, độ ẩm, chuyển động, cường độ ánh sáng}.\chonesourcepage{24}
+
+\subsection{Gateway/Network -- Cổng mạng và tầng kết nối}
+Gateway quản lý \textbf{luồng dữ liệu hai chiều} giữa các mạng có chuẩn truyền thông khác nhau, thực hiện \textbf{chuyển đổi giao thức} và hỗ trợ khả năng \textbf{tương tác liên thông (interoperability)}. Gateway có thể tổng hợp/lọc/tiền xử lý dữ liệu từ hàng nghìn cảm biến cục bộ rồi mới đưa sang giai đoạn kế tiếp; trong một số triển khai nó phải tương thích với \textbf{TCP/IP}. Cổng còn là tuyến phòng vệ giữa thiết bị và đám mây nhờ cơ chế bảo mật và mã hóa đường truyền, giảm rủi ro truy cập trái phép hoặc tấn công vào mạng thiết bị.\chonesourcepage{25}
+
+\subsection{Cloud -- Nền tảng điện toán đám mây}
+Cloud cung cấp hạ tầng, phần mềm để \textbf{thu thập, xử lý, quản lý và lưu trữ dữ liệu quy mô lớn theo thời gian thực}. Các máy chủ có hiệu năng cao, hệ thống phân tán, cơ sở dữ liệu và phân tích hỗ trợ dữ liệu từ lượng rất lớn thiết bị, sensor, gateway; đồng thời hỗ trợ quản lý lưu lượng, phân tích chính xác và dự báo. Trong mô tả tại slide, \textbf{hệ quản trị cơ sở dữ liệu phân tán} là một thành phần then chốt.\chonesourcepage{26}
+
+\subsection{Services -- Dịch vụ và phân tích thông minh}
+Tầng dịch vụ biến dữ liệu thô thu được từ thiết bị/cảm biến thành \textbf{thông tin, nhận thức và chỉ dẫn có thể hành động}. Phân tích dữ liệu được dùng để hiểu và quản lý hoạt động, chuẩn bị hành động đúng thời điểm, cải thiện hệ thống và khai thác cơ hội kinh doanh về sau. Slide sử dụng cách diễn đạt ``transform analog data''; về mặt quy trình cần hiểu là chuyển dữ liệu đầu vào của thế giới thực sang biểu diễn có thể phân tích, chứ không giới hạn mọi dữ liệu đầu vào ở dạng analog.\chonesourcepage{27}
+
+\subsection{User Interface -- Giao diện người dùng}
+Là phần người sử dụng trực tiếp quan sát và thao tác với hệ IoT, ví dụ màn hình trên điện thoại hoặc bảng điều khiển cảm ứng. Một giao diện tốt biến quy trình phức tạp thành thao tác dễ hiểu, hỗ trợ hiển thị trạng thái, cảnh báo và ra lệnh điều khiển. Slide 28 minh họa giao diện \emph{My Home} trên điện thoại.\chonesourcepage{28}
+
+\subsection{Kiến trúc phân tầng: tổng quan 3, 4 và 5 tầng}
+Sơ đồ slide 29 đối chiếu ba mô hình kiến trúc IoT; tên các tầng từ dưới lên được tổng hợp như sau:
+\begin{table}[H]\centering\small\caption{Đối chiếu kiến trúc 3/4/5 tầng theo slide 29 và 34--39.}
+\begin{tabularx}{\linewidth}{@{}l X@{}}\toprule
+Mô hình & Các tầng theo thứ tự từ dưới lên\\\midrule
+3 tầng & Perception (cảm nhận) $\to$ Network (mạng) $\to$ Application (ứng dụng)\\
+4 tầng (SoA) & Perception/Sensors \& Actuators $\to$ Network $\to$ Data Processing $\to$ Application\\
+5 tầng & Perception $\to$ Transport/Network $\to$ Processing/Middleware $\to$ Application $\to$ Business\\\bottomrule
+\end{tabularx}\end{table}
+\choneslidefigure{29}{So sánh cấu trúc kiến trúc IoT ba, bốn và năm tầng}
+
+\subsection{Chi tiết mô hình 3 tầng}
+\textbf{Tầng cảm nhận (Perception layer)} bao gồm ba nhóm thể hiện ở slide 31: \emph{thing/device hardware} -- phần cứng cốt lõi; \emph{IoT components} -- sensor, actuator, processor, cổng giao tiếp và anten; \emph{thing/device software} -- phần mềm nhúng chạy trên vật thể để quản lý và vận hành chức năng. Chức năng chính là nhận biết nút IoT và thu nhận dữ liệu từ môi trường.\chonesourcepage{30--31}
+
+\textbf{Tầng mạng (Network layer)} trong slide 32 gồm \emph{network communication}: các giao thức cho phép thiết bị/vật thể giao tiếp với hạ tầng mạng lõi và/hoặc đám mây. Chức năng là truyền dữ liệu giữa đầu cuối và dịch vụ, đồng thời liên kết các mạng và thiết bị.\chonesourcepage{32}
+
+\textbf{Tầng ứng dụng (Application layer)} trên slide 33 được minh họa thành \emph{năm nhóm phần mềm chức năng}, không phải thêm năm tầng độc lập:
+\begin{enumerate}
+\item \textbf{Thing/device communications and management}: cung cấp, giao tiếp, quản lý thiết bị.
+\item \textbf{Application platform}: môi trường xây dựng và thực thi ứng dụng IoT.
+\item \textbf{Process management}: định nghĩa, thực thi, giám sát quy trình liên quan người, hệ thống và thiết bị.
+\item \textbf{Analytics and data management}: lưu trữ, xử lý và phân tích lượng lớn dữ liệu máy móc dạng chuỗi thời gian.
+\item \textbf{IoT application}: điều phối sự tương tác giữa con người, hệ thống và đồ vật nhằm phục vụ một mục tiêu cụ thể.
+\end{enumerate}
+\choneslidefigure{31}{Ba bộ phận cấu thành lớp cảm nhận trong kiến trúc 3 tầng}
+\choneslidefigure{33}{Năm nhóm chức năng trong hình minh họa của lớp ứng dụng}
+
+\subsection{Kiến trúc hướng dịch vụ SoA -- Bốn tầng}
+\textbf{Service-Oriented Architecture (SoA)} là kiến trúc dựa trên mô hình các thành phần dịch vụ: các khối chức năng được kết nối thông qua giao diện và giao thức đã xác định. Trong cách trình bày của slide 34--36, kiến trúc bốn tầng gồm:
+\begin{enumerate}
+\item \textbf{Perception / Sensors and Actuators}: nhận diện thiết bị, lấy dữ liệu từ cảm biến nhiều loại; tầng phải thích nghi với đặc tính hoạt động của từng cảm biến.
+\item \textbf{Networking (Transmission)}: cầu nối truyền/nhận dữ liệu từ đối tượng vật lý, kết nối thiết bị và các mạng khác nhau.
+\item \textbf{Data Processing}: tiếp nhận dữ liệu của tầng cảm nhận và kiểm tra dữ liệu được chuyển từ người dùng/nguồn hợp lệ, đồng thời hỗ trợ chống các mối đe dọa.
+\item \textbf{Application}: xác định ứng dụng IoT, cung cấp giao diện giữa thiết bị cuối và mạng, cho phép các dịch vụ dựa trên dữ liệu cảm biến thu thập.
+\end{enumerate}
+\choneslidefigure{34}{Sơ đồ bốn tầng của kiến trúc hướng dịch vụ SoA}
+
+\subsection{Kiến trúc năm tầng}
+Các tầng từ dưới lên và nội dung chi tiết của hình slide 37:
+\begin{description}[leftmargin=0pt,labelindent=0pt,style=nextline]
+\item[1. Perception -- Cảm nhận:] đối tượng vật lý, \emph{RFID}, mã vạch, cảm biến hồng ngoại và các nguồn dữ liệu tương tự.
+\item[2. Network/Transport -- Mạng/truyền tải:] truyền an toàn; \emph{3G, UMTS, Wi-Fi, Bluetooth, hồng ngoại, ZigBee}, v.v. Slide 38 nêu thêm \emph{LAN, RFID, NFC} và liên lạc không dây làm phương tiện chuyển dữ liệu từ tầng cảm nhận tới tầng xử lý và ngược lại.
+\item[3. Middleware/Processing -- Trung gian/xử lý:] \emph{information processing}, \emph{ubiquitous computing}, \emph{service management}, \emph{database}, \emph{decision unit}; lưu trữ, phân tích dữ liệu lớn, quản lý dịch vụ bằng cơ sở dữ liệu, điện toán đám mây và xử lý Big Data.
+\item[4. Application -- Ứng dụng:] các ứng dụng thông minh và quản lý ứng dụng, phục vụ mục đích sử dụng cụ thể.
+\item[5. Business -- Kinh doanh:] \emph{system management}, \emph{business models}, \emph{flowchart}, \emph{graphs}; quản lý toàn hệ IoT, mô hình lợi nhuận, quản trị ứng dụng và quyền riêng tư người dùng.
+\end{description}
+Ở hình này tầng \emph{Network} được dùng tương ứng với chức năng \emph{Transport} trong đoạn văn của slide 38; vì thế hai tên được giải thích cùng nhau thay vì coi là sáu tầng.\chonesourcepage{37--39}
+\choneslidefigure{37}{Kiến trúc IoT năm tầng với các thành phần cụ thể của mỗi tầng}
+
+\subsection{Kiến trúc sáu tầng}
+Slide 40 nêu sơ đồ với năm dải chức năng nhìn thấy: \textbf{Physical/device}, \textbf{Network}, \textbf{Data/database}, \textbf{Application/integration}, \textbf{Analytics/visualization}, đồng thời có dải \textbf{Security and management} chạy xuyên suốt. Tài liệu gốc gọi là ``six-layer architecture''; cách đọc nhất quán với hình là tính \emph{Security and Management} là lớp/chức năng thứ sáu liên tầng. Lớp bảo mật và quản trị áp dụng lên toàn bộ kiến trúc, không nhất thiết là một trạm xử lý dữ liệu độc lập trên đường đi.\chonesourcepage{40}
+\choneslidefigure{40}{Mô hình sáu tầng theo slide gốc, bao gồm bảo mật và quản trị liên tầng}
+
+\subsection{Kiến trúc bảy tầng}
+Hình tại slide 41 mô tả bảy tầng theo thứ tự từ thấp lên cao:
+\begin{enumerate}
+\item \emph{Things}: thiết bị, cảm biến, bộ điều khiển.
+\item \emph{Connectivity / Edge Computing}: kết nối, giao thức, mạng, M2M, Wi-Fi, viễn thông, phần cứng trung gian; được chú thích thuộc khu vực Fog.
+\item \emph{Global Infrastructure}: hạ tầng Cloud công cộng, riêng, lai hoặc được quản lý.
+\item \emph{Data Ingestion}: thu nhận, tập hợp và lưu trữ dữ liệu lớn từ đồ vật.
+\item \emph{Data Analysis}: báo cáo, khai phá dữ liệu và học máy.
+\item \emph{Applications}: ứng dụng tùy biến từ dữ liệu của đồ vật.
+\item \emph{People and Process}: quyết định chuyển đổi dựa trên dữ liệu và ứng dụng IoT.
+\end{enumerate}
+Sơ đồ còn nhóm tầng 1--2 là \emph{Fog}, tầng 3 là \emph{Cloud}, tầng 4--5 là \emph{Big Data}, tầng 6--7 là \emph{Business Value}. Đây là một cách nhìn khác với kiến trúc ba tầng, cho thấy đường chuyển từ \emph{thiết bị vật lý} tới \emph{giá trị kinh doanh}.\chonesourcepage{41}
+\choneslidefigure{41}{Kiến trúc bảy tầng, từ thiết bị đến giá trị kinh doanh}
+
+\section{Các ứng dụng của Internet vạn vật}\label{sec:applications}
+\subsection{Mười nhóm ứng dụng minh họa}
+Hình ``IoT Applications and Usecases'' tại slide 42 liệt kê \textbf{10 nhóm}: \emph{Smart home} (nhà thông minh), \emph{Wearables} (thiết bị đeo), \emph{Smart City} (đô thị thông minh), \emph{Smart grids} (lưới điện thông minh), \emph{Industrial Internet} (Internet công nghiệp), \emph{Connected car} (xe kết nối), \emph{Connected Health} (y tế kết nối), \emph{Smart Retail} (bán lẻ thông minh), \emph{Smart Supply Chain} (chuỗi cung ứng thông minh) và \emph{Smart Farming} (nông nghiệp thông minh).\chonesourcepage{42}
+\begin{longtable}{@{}p{.26\linewidth}p{.68\linewidth}@{}}\caption{Ứng dụng IoT xuất hiện trong hai hình slide 42--43.}\\\toprule
+Lĩnh vực & Ý nghĩa/đối tượng điển hình trong hình\\\midrule\endfirsthead\toprule Lĩnh vực & Ý nghĩa/đối tượng điển hình\\\midrule\endhead
+Nhà thông minh & Điều khiển đồ gia dụng, an ninh, tiện nghi và tự động hóa trong nhà.\\
+Thiết bị đeo & Theo dõi trạng thái cơ thể, hỗ trợ cá nhân trên thiết bị đeo.\\
+Đô thị thông minh & Giám sát và quản trị hạ tầng, chiếu sáng, giao thông và dịch vụ đô thị.\\
+Lưới điện thông minh & Thiết bị đo thông minh, giám sát và điều phối lưới điện.\\
+Internet công nghiệp & Máy móc, nhà xưởng, cảm biến và vận hành sản xuất.\\
+Xe kết nối & Cảm biến trên xe, chẩn đoán, chia sẻ dữ liệu xe--dịch vụ.\\
+Y tế kết nối & Thiết bị theo dõi và hỗ trợ chăm sóc sức khỏe.\\
+Bán lẻ thông minh & Giám sát hàng hóa, tương tác mua sắm, quản lý bán lẻ.\\
+Chuỗi cung ứng thông minh & Truy vết hàng hóa, vận tải, kho và logistics.\\
+Nông nghiệp thông minh & Giám sát môi trường canh tác, cây trồng và vận hành nông trại.\\\bottomrule
+\end{longtable}
+Slide 43 bổ sung tranh ghép minh họa ngành bán lẻ, hệ thống điện, xe thông minh, các cảm biến và bối cảnh nông nghiệp; đây là hình minh họa khả năng ứng dụng, không phải bảng phân loại chính thức có ranh giới cứng.\chonesourcepage{43}
+\choneslidefigure{42}{Mười nhóm ứng dụng và tình huống sử dụng IoT}
+\choneslidefigure{43}{Ảnh ghép các ngữ cảnh triển khai IoT trong đời sống và sản xuất}
+
+\subsection{Tình huống 1 -- Đồng hồ báo thức thông minh tại nhà}
+Ở slide 44, người học thường phải dậy lúc \textbf{7:00} để đi học. Một hôm tuyến xe buýt bị hủy; do trời mưa nên không đặt được xe Grab và phải chuyển sang đi xe đạp, đòi hỏi dậy lúc \textbf{6:30} để không đi muộn. Đồng hồ báo thức có kết nối IoT có thể kết hợp \emph{trạng thái giao thông/vận tải}, \emph{dự báo thời tiết}, \emph{thời gian di chuyển thay thế} và \emph{giờ đến lớp} rồi tự cập nhật giờ thức dậy. Nếu được tích hợp sâu hơn, thiết bị có thể đồng bộ máy pha cà phê kết nối mạng để chuẩn bị đồ uống đúng giờ. Ví dụ cho thấy IoT không chỉ truyền số liệu, mà còn kết hợp \emph{ngữ cảnh, quyết định và điều khiển nhiều thiết bị}.\chonesourcepage{44}
+
+\subsection{Tình huống 2 -- Chẩn đoán xe và dịch vụ bảo dưỡng}
+Ở slide 45, đèn cảnh báo động cơ sáng khi người sử dụng đang lái xe. Các cảm biến liên quan truyền dữ liệu qua \emph{chuỗi chẩn đoán (diagnostic chain)} đến \emph{gateway trên xe}; gateway gửi thông tin quan trọng tới cơ sở của nhà sản xuất. Từ đó nhà sản xuất hoặc hệ dịch vụ có thể xác định mức độ khẩn cấp, đặt lịch sửa chữa, chuyển địa chỉ đại lý gần nhất và chuẩn bị sẵn phụ tùng khi xe đến. Quy trình minh họa liên hệ giữa \emph{thu nhận dữ liệu} $\to$ \emph{truyền dữ liệu} $\to$ \emph{phân tích} $\to$ \emph{dịch vụ và hành động}. Slide kết thúc bằng gợi ý người học tự liệt kê các đồ vật có thể áp dụng IoT thực tế.\chonesourcepage{45}
+
+\subsection{Năm dự báo IoT cho năm 2025 -- dữ liệu theo hình nguồn}
+Slide 46 chứa đồ họa có tiêu đề ``5 predictions for IoT in 2025'' (ghi nguồn trên ảnh: \emph{Machina Research}). Các số liệu dưới đây là \textbf{dự báo được trích từ slide, không phải số liệu thống kê kiểm chứng năm 2025/2026}:
+\begin{enumerate}
+\item \textbf{27 tỷ} kết nối IoT toàn cầu (chú thích ảnh: 6 tỷ năm 2015).
+\item \textbf{3 nghìn tỷ USD} dự báo doanh thu (revenue forecast).
+\item \textbf{2,2 tỷ} kết nối IoT qua mạng di động (chú thích ảnh: 334 triệu năm 2015).
+\item \textbf{45\%} kết nối IoT di động có liên hệ tới xe kết nối.
+\item \textbf{2 zettabyte} dữ liệu do IoT tạo ra, chủ yếu từ thiết bị người tiêu dùng.
+\end{enumerate}
+Các con số này không nên được sử dụng làm mô tả quy mô IoT hiện nay nếu không kiểm chứng lại nguồn.\chonesourcepage{46}
+\choneslidefigure{46}{Infographic năm dự báo IoT cho năm 2025 trong tài liệu nguồn}
+
+\section{Cơ hội, thách thức và tổng kết}\label{sec:challenges}
+\subsection{Bốn hướng tác động và cơ hội}
+Theo slide 47, các thay đổi cơ bản của IoT gồm \textbf{New Markets} -- hình thành thị trường mới; \textbf{Changed Value Creation} -- thay đổi cách tạo ra giá trị và mô hình sản phẩm/dịch vụ; \textbf{Increased Awareness for Information Spaces} -- nhận thức cao hơn về các không gian dữ liệu/thông tin hiện diện cùng môi trường vật lý; và \textbf{Social, Ethical, Legal, and Risk Aspects} -- các khía cạnh xã hội, đạo đức, pháp lý và rủi ro cần được cân nhắc. Hình đám mây từ khóa minh họa các chủ đề phát triển thị trường, dữ liệu, hành vi và công nghệ Internet.\chonesourcepage{47}
+
+\subsection{Những thách thức kỹ thuật và triển khai}
+Slide 48 đưa ra chín thách thức; mỗi mục dưới đây giữ nguyên phạm vi kiến thức nguồn và bổ sung diễn giải thuật ngữ tiếng Việt:
+\begin{enumerate}
+\item \textbf{Availability of the Internet Anywhere Anytime}: khả năng sẵn có của Internet mọi lúc, mọi nơi; bài toán vùng phủ sóng và độ liên tục kết nối.
+\item \textbf{Social and Individual Acceptability}: mức chấp nhận của xã hội và cá nhân đối với thiết bị/kết nối, dữ liệu được thu thập và cách công nghệ được ứng dụng.
+\item \textbf{Low-cost Smart Sensor Node Development}: phát triển nút cảm biến thông minh có giá thành thấp nhưng phù hợp yêu cầu sử dụng.
+\item \textbf{Collect Energy}: thu thập/khai thác năng lượng (energy harvesting) để duy trì hoạt động thiết bị.
+\item \textbf{Computing Capability}: năng lực tính toán tại nút hoặc hệ thống khi tài nguyên xử lý có giới hạn.
+\item \textbf{Security Issues}: an ninh/bảo mật của thiết bị, mạng và dữ liệu.
+\item \textbf{Scalability, Reliability}: khả năng mở rộng và độ tin cậy khi số lượng thiết bị tăng.
+\item \textbf{Fault Tolerance}: khả năng chịu lỗi để hệ thống vẫn cung cấp chức năng cần thiết khi một thành phần gặp sự cố.
+\item \textbf{Power Consumption of Nodes and Transceivers}: tiêu thụ năng lượng của nút và bộ thu phát truyền thông.
+\end{enumerate}
+\chonesourcepage{48}
+
+\subsection{Kết luận của chương}
+Slide 49 rút ra bốn kết luận chính. Thứ nhất, hệ IoT gồm \emph{cảm biến, các thiết bị kết nối và hạ tầng đám mây lưu trữ lớn}. Thứ hai, IoT phát triển từ sự hội tụ của \emph{công nghệ không dây, công nghệ vi cơ điện (micromechanical) và Internet}. Thứ ba, các công nghệ/giao thức mới liên tục tham gia hệ sinh thái, giúp ứng dụng dễ tiếp cận hơn, có chi phí thấp hơn, sử dụng năng lượng hiệu quả hơn và an toàn hơn. Cuối cùng, nhu cầu ở nhiều lĩnh vực tạo động lực để IoT tiếp tục mở rộng trong tương lai. Slide 50 là lời kết ``Thank you for attention!''.\chonesourcepage{49--50}
+
+\section*{Bảng kiểm đối chiếu nguồn theo trang slide}
+\addcontentsline{toc}{section}{Bảng kiểm đối chiếu nguồn theo trang slide}
+\small
+\begin{longtable}{@{}p{.14\linewidth}p{.79\linewidth}@{}}\toprule
+Slide & Nội dung đã ghi nhận trong chương\\\midrule\endfirsthead\toprule Slide & Nội dung đã ghi nhận\\\midrule\endhead
+1--2 & Trang bìa, giảng viên, tên chương và sáu nhóm nội dung.\\
+3--4 & Mã học phần, mục tiêu, giao thức nêu trong học phần, quy định học và lịch lớp 2022.\\
+5, 12 & Định nghĩa IoT (lặp lại) và hình cây thiết bị kết nối.\\
+6--8 & Bốn giai đoạn tiến hóa Internet, bảng định nghĩa và sơ đồ Pre-Internet đến IoT.\\
+9--11 & Kevin Ashton, RFID, P\&G, bài viết 2009, Neil Gershenfeld, ATM, máy bán hàng 1980 và IIoT.\\
+13--14 & Khái niệm mạng IoT, ví dụ đối tượng gắn chip/cảm biến và các dạng thiết bị.\\
+15--17 & Cấu trúc Smart Object và năm xu hướng phát triển.\\
+18--19 & Smart Environment và Ubiquitous Computing/Mark Weiser.\\
+20--22 & M2M, IIoT và các thành phần Industry 4.0.\\
+23--28 & Kiến trúc chức năng: Things, Gateway, Cloud, Services, User Interface.\\
+29--33 & So sánh kiến trúc 3/4/5 tầng; chi tiết ba tầng và năm nhóm chức năng lớp ứng dụng.\\
+34--36 & SoA bốn tầng: Application, Data Processing, Network, Perception.\\
+37--39 & Kiến trúc năm tầng, bộ phận mỗi tầng và vai trò Transport, Middleware, Business.\\
+40--41 & Kiến trúc sáu và bảy tầng, bảo mật xuyên lớp, phân nhóm Fog/Cloud/Big Data/Business.\\
+42--43 & 10 nhóm ứng dụng và tranh ghép tình huống IoT.\\
+44--45 & Hai tình huống: báo thức thông minh, chẩn đoán xe kết nối.\\
+46 & Năm số liệu dự báo cho 2025 (giữ ngữ cảnh dự báo).\\
+47--48 & Cơ hội và chín thách thức nghiên cứu/triển khai IoT.\\
+49--50 & Bốn kết luận cuối chương và lời cảm ơn.\\\bottomrule
+\end{longtable}
+\normalsize
+\noindent\textbf{Lưu ý về hình minh họa và quyền nguồn:} Hình ảnh trong bản PDF biên soạn này được tái sử dụng từ file slide mà người dùng cung cấp để phục vụ đối chiếu học tập. Nội dung gốc thuộc tác giả/đơn vị tài liệu đã nêu. Ở bản đưa lên GitHub, có thể tự tạo lại ảnh phục vụ biên dịch bằng \texttt{scripts/extract\_slides.py} từ slide gốc, thay vì lưu trữ hoặc phân phối lại slide gốc trong repo công khai.

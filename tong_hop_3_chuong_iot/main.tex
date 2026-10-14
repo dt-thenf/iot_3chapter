@@ -1,0 +1,83 @@
+% !TeX program = lualatex
+% Bản tổng hợp 3 chương; chỉ thay đổi preamble, giữ nguyên chapter*.tex.
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage[a4paper,left=25mm,right=22mm,top=24mm,bottom=24mm,headheight=17pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+\usepackage[vietnamese,english]{babel}
+\babelprovide[import,main]{vietnamese}
+\usepackage{microtype}
+\usepackage{graphicx,float,pdfpages,booktabs,longtable,tabularx,array,multirow}
+\usepackage{caption,subcaption,multicol,enumitem}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes,shapes.geometric,fit,backgrounds,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor,listings,fancyhdr,titlesec}
+\usepackage{hyperref}
+\definecolor{iotblue}{HTML}{1B3A70}
+\definecolor{iotcyan}{HTML}{087EAC}
+\definecolor{iotorange}{HTML}{EA6B21}
+\definecolor{iotlight}{HTML}{EAF2F8}
+\definecolor{navy}{HTML}{213966}
+\definecolor{teal}{HTML}{087E91}
+\definecolor{orangeiot}{HTML}{D46E18}
+\definecolor{orange}{HTML}{D87B37}
+\hypersetup{colorlinks=true,linkcolor=iotblue,urlcolor=iotcyan,pdftitle={Co so va thiet ke he thong IoT - Chuong 1,2,3}}
+\titleformat{\chapter}[display]{\sffamily\bfseries\color{iotblue}}{\Large CHƯƠNG \thechapter}{1em}{\Huge}
+\titleformat{\section}{\sffamily\Large\bfseries\color{iotblue}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{iotcyan}}{\thesubsection}{0.65em}{}
+\setlist[itemize]{topsep=3pt,itemsep=2pt,leftmargin=1.8em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,leftmargin=1.8em}
+\captionsetup{font=small,labelfont=bf,justification=centering}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\sffamily Cơ sở và thiết kế hệ thống IoT}
+\fancyhead[R]{\small\sffamily Chương \thechapter}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+% Chapter 2
+\newtcolorbox{concept}[1][]{colback=blue!2,colframe=navy,boxrule=.6pt,arc=2mm,title={Kiến thức trọng tâm},fonttitle=\bfseries,#1}
+\newtcolorbox{noteiot}[1][]{colback=orange!4,colframe=orange!70!black,boxrule=.5pt,arc=1mm,title={Lưu ý},fonttitle=\bfseries,#1}
+\newcommand{\slidesource}[1]{\par\smallskip{\footnotesize\color{teal}\textit{Đối chiếu slide gốc: trang #1.}}\par}
+\newcommand{\slidefig}[2]{\begin{figure}[H]\centering\IfFileExists{assets/chapter2_original_slides.pdf}{\includegraphics[page=#1,width=.92\linewidth]{assets/chapter2_original_slides.pdf}}{\fbox{\parbox{.82\linewidth}{Hình trang #1 chưa được khôi phục; chạy build.sh.}}}\caption{#2 (nguồn: slide gốc, trang #1).}\end{figure}}
+\lstdefinestyle{iot}{basicstyle=\ttfamily\small,breaklines=true,frame=single,backgroundcolor=\color{blue!2},numbers=left,numberstyle=\tiny,keywordstyle=\color{navy},commentstyle=\color{teal},showstringspaces=false,columns=fullflexible}
+\lstset{style=iot}
+% Chapter 3
+\newtcolorbox{ghinho}[1][]{colback=blue!3,colframe=navy!75!white,fonttitle=\bfseries,title={Ghi nhớ},breakable,#1}
+\newtcolorbox{nguonslide}[1][]{colback=orange!4,colframe=orangeiot!65!white,fonttitle=\bfseries,title={Đối chiếu slide gốc},breakable,#1}
+\newcommand{\sourcepage}[1]{\textit{(Nguồn: slide Chương 3, trang PDF #1.)}}
+\newcommand{\term}[2]{\textbf{#1} (\textit{#2})}
+% Chapter 1 tự cung cấp macro \chone... trong chapter1.tex
+\begin{document}
+\emergencystretch=3em
+\selectlanguage{vietnamese}
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\begin{titlepage}
+\centering\vspace*{24mm}
+{\Large TRƯỜNG ĐẠI HỌC PHENIKAA\\KHOA ĐIỆN -- ĐIỆN TỬ\par}
+\vspace{25mm}
+{\Huge\bfseries\color{iotblue}CƠ SỞ VÀ THIẾT KẾ HỆ THỐNG IoT\par}
+\vspace{13mm}
+{\LARGE\bfseries\color{iotorange}TỔNG HỢP CHƯƠNG 1 -- 2 -- 3\par}
+\vspace{10mm}
+{\Large Chương 1: Tổng quan về IoT\par}
+{\Large Chương 2: Phần cứng IoT\par}
+{\Large Chương 3: Công nghệ mạng trong IoT\par}
+\vfill
+{\large Biên soạn và diễn giải theo học liệu TS. Nguyễn Đắc Cử\\Trường Đại học Phenikaa\par}
+\vspace{12mm}{\large 2026\par}
+\end{titlepage}
+\pagenumbering{roman}\tableofcontents\clearpage
+\pagenumbering{arabic}
+\input{chapter1.tex}
+\clearpage
+\input{chapter2.tex}
+\clearpage
+\input{chapter3.tex}
+\end{document}
