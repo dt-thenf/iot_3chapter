@@ -333,3 +333,127 @@ LTE-M & Không chốt số km & Không chốt số bit/s & Cellular, di động 
 \begin{luuy}
 \textbf{Biến thể đề về cự ly gần/tốc độ cao:} phải thay danh sách theo ứng dụng. Bảng Chương 3, trang PDF 42 có mốc \textbf{Bluetooth 100 m, 125 kbps--Mbps}; \textbf{Zigbee 100 m, 20--250 kbps}; \textbf{Z-Wave 100 m, khoảng 100 kbps}; \textbf{Wi-Fi 50 m, 150--600 Mbps}; \textbf{NFC cỡ 4 cm, 100--420 kbps}. Slide riêng NFC ghi mức 106/212/424 kbps; số liệu thay đổi theo chế độ và phiên bản. NFC chỉ thích hợp giao tiếp sát nhau, \emph{không} thể được coi là ứng viên tương đương BLE cho node cách gateway 20 m. Với yêu cầu tốc độ rất cao có thể cân nhắc Wi-Fi/Wi-Fi Direct, UWB, Li-Fi, 4G/5G theo hạ tầng, vật cản, quang thông và phiên bản; không ép năm giao thức có cùng bit-rate.
 \end{luuy}
+
+\newpage
+\section{Câu 6. Các mô hình truyền dữ liệu trong IoT: Request/Response, Publish/Subscribe}
+\textbf{Đề giả định:} Trình bày các mô hình truyền dữ liệu của hệ thống IoT; nêu đặc điểm và liên hệ HTTP, CoAP, MQTT. Phạm vi phù hợp với Chương 3, các slide về Publish/Subscribe, Request/Response và giao thức dữ liệu (trang PDF 57--80).
+
+\begin{barem}
+\begin{enumerate}
+\item Request/Response: khái niệm, quy trình, ưu/nhược: 1,0 điểm.
+\item Publish/Subscribe: vai trò Publisher, Subscriber, Broker, Topic: 1,0 điểm.
+\item HTTP: bản chất, đặc trưng, phương thức, ứng dụng: 1,0 điểm.
+\item CoAP: REST/UDP, cơ chế bản tin, ứng dụng: 1,0 điểm.
+\item MQTT: Topic, QoS, so sánh và lựa chọn giao thức: 1,0 điểm.
+\end{enumerate}
+\end{barem}
+
+\muc{Ý 1. Request/Response -- mô hình yêu cầu và đáp ứng}
+\textbf{Khái niệm:} mô hình client--server trong đó \textbf{client chủ động gửi một request} để yêu cầu đọc, gửi, sửa dữ liệu hoặc thực hiện thao tác cụ thể; \textbf{server xử lý và gửi response} mang kết quả hoặc mã trạng thái. Ví dụ, ứng dụng yêu cầu máy chủ đọc nhiệt độ gần nhất rồi nhận một đối tượng dữ liệu. Trong Chương 3, request/response được nhận xét là dễ tích hợp vào ứng dụng client/server.
+
+\textbf{Quy trình:} (1) client xác định tài nguyên hoặc dịch vụ; (2) gửi yêu cầu; (3) mạng vận chuyển; (4) server xác thực/xử lý và tạo phản hồi; (5) client nhận, hiển thị hoặc tiếp tục gửi yêu cầu mới. Đặc trưng thường được gọi là \textbf{pull}: bên cần thông tin chủ động hỏi (đặc biệt rõ ở HTTP).
+
+\textbf{Ưu:} đơn giản, dễ triển khai và kiểm thử, ngữ nghĩa yêu cầu rõ ràng, hợp với API Web và truy vấn theo nhu cầu. \textbf{Nhược:} nếu hàng nghìn node hoặc dashboard hỏi liên tục bằng polling thì tạo nhiều gói dư thừa, tăng thời gian hoạt động radio và tiêu thụ năng lượng; nếu hỏi quá thưa thì không cập nhật kịp sự kiện. Cần phân biệt số lần hỏi với tốc độ truy cập tài nguyên và độ trễ mạng.
+
+\textbf{Ví dụ:} ứng dụng gửi \texttt{GET /api/temperature?id=1}, server trả \texttt{200 OK} và số đo hiện tại. \nguon{Chương 3, trang PDF 59, 61--65}
+
+\muc{Ý 2. Publish/Subscribe -- mô hình xuất bản và đăng ký}
+\textbf{Khái niệm:} thiết bị hoặc phần mềm \textbf{publisher} công bố thông điệp theo kênh/chủ đề; \textbf{subscriber} đăng ký nhận nội dung quan tâm; trong MQTT điển hình, \textbf{broker} là thành phần trung gian nhận, lọc và phân phối bản tin theo \textbf{topic}. Bên phát không phải biết danh sách bên nhận, và có thể có nhiều subscriber nhận cùng một thông điệp.
+
+\textbf{Ví dụ quy trình:} cảm biến A kết nối MQTT broker, publish chủ đề \texttt{house/room1/temp} với payload \texttt{27.6}; dashboard B subscribe chủ đề đó, hệ thống cảnh báo C cũng subscribe. Khi A phát bản tin mới, broker phân phối theo đăng ký và điều kiện QoS/quyền truy cập.
+
+\textbf{Ưu:} decoupling giữa bên gửi và bên nhận; dễ mở rộng nhiều node, chuyển dữ liệu theo sự kiện thay vì client polling, nhiều dịch vụ tiêu thụ chung một dòng telemetry. \textbf{Nhược:} phụ thuộc broker/hạ tầng trung gian, phải quản trị phân quyền topic, chất lượng kết nối và trạng thái phiên; bản tin không mặc nhiên được lưu vĩnh viễn nếu không thiết kế lưu trữ hoặc retained/session theo nhu cầu.
+
+\textbf{Chú ý nguồn:} slide cũng dùng cụm \emph{node subscription} cho thao tác nhận diện/đăng ký một node khi gia nhập dịch vụ mạng; \textbf{không đồng nhất} hoàn toàn với lệnh MQTT SUBSCRIBE đăng ký nhận một topic. Pub/Sub phù hợp hệ thống lớn có nhiều node thường xuyên trao đổi dữ liệu. \nguon{Chương 3, trang PDF 57--59}
+
+\muc{Ý 3. HTTP (HyperText Transfer Protocol)}
+\textbf{Khái niệm:} giao thức ứng dụng Web phổ biến, định hướng client--server với cặp request/response. Bài giảng Chương 3 gọi HTTP là \emph{pull protocol}: client chủ động lấy thông tin từ server. HTTP là \textbf{stateless}: mỗi request không tự có toàn bộ trạng thái ngữ cảnh trước đó; ứng dụng có thể xây dựng session/cookie/token riêng nếu cần.
+
+\textbf{Phương thức quan trọng:}
+\begin{itemize}
+\item \textbf{GET:} truy xuất tài nguyên/dữ liệu.
+\item \textbf{POST:} gửi dữ liệu hoặc yêu cầu xử lý, thường để tạo mới.
+\item \textbf{PUT:} thường thay thế hoặc cập nhật một tài nguyên có địa chỉ.
+\item \textbf{PATCH:} sửa một phần tài nguyên.
+\item \textbf{DELETE:} yêu cầu xóa tài nguyên.
+\end{itemize}
+Các phương thức liên quan tư tưởng CRUD, nhưng API cụ thể có thể có ngữ nghĩa chi tiết riêng.
+
+\textbf{Ưu điểm:} hỗ trợ rộng trên Web, dùng REST API dễ dàng, nhiều thư viện, tích hợp hệ thống thông tin và dashboard tiện lợi. \textbf{Nhược điểm theo slide:} request/response có thể gây chi phí đối với rất nhiều cảm biến; các phiên bản HTTP trên TCP có header/kết nối tương đối nặng hơn giao thức nhẹ, tiêu thụ năng lượng đáng kể khi node chạy pin. \textbf{Ví dụ:} ESP32 gửi JSON bằng POST tới web API, điện thoại GET lịch sử đo. Sử dụng HTTPS/TLS nếu cần bảo mật qua mạng không tin cậy; HTTP không tự mã hóa. \nguon{Chương 3, trang PDF 61--64}
+
+\muc{Ý 4. CoAP (Constrained Application Protocol)}
+\textbf{Khái niệm:} giao thức Web cho thiết bị, mạng bị giới hạn tài nguyên và băng thông; hướng \textbf{REST/client--server} tương tự HTTP, tài nguyên định danh bằng URI và hỗ trợ \textbf{GET, POST, PUT, DELETE}. CoAP cơ bản thường chạy qua \textbf{UDP}; do UDP không có bảo đảm giao vận như TCP, CoAP cung cấp một số cơ chế xác nhận ở lớp ứng dụng.
+
+\textbf{Các ưu điểm từ slide:} overhead nhỏ và dễ phân tích cú pháp, trao đổi bất đồng bộ, hỗ trợ URI và content type, có thể kết hợp proxy và cache. Phù hợp sensor node ít RAM/năng lượng hoặc mạng nhiều mất mát.
+
+\textbf{Bốn loại bản tin phải thuộc:}
+\begin{enumerate}
+\item \textbf{CON -- Confirmable:} bản tin yêu cầu xác nhận từ bên nhận, có thể được phát lại sau timeout với backoff.
+\item \textbf{NON -- Non-confirmable:} gửi không yêu cầu ACK ở CoAP.
+\item \textbf{ACK -- Acknowledgment:} xác nhận bản tin CON (có thể đi kèm phản hồi tùy luồng xử lý).
+\item \textbf{RST -- Reset:} thông báo bản tin không xử lý được trong ngữ cảnh người nhận, thường báo bỏ/không nhận trạng thái liên quan.
+\end{enumerate}
+Slide nêu message ID 16 bit để phát hiện/tránh trùng ở cơ chế CON. Không được kết luận mọi gói CoAP đều đảm bảo đến đích: NON không yêu cầu ACK. CoAP có thể kết hợp DTLS hoặc cơ chế bảo vệ đối tượng; giao thức CoAP thuần không tự thực hiện toàn bộ mã hóa. \textbf{Ví dụ:} gateway gửi \texttt{GET coap://node/sensors/temp} đến nút giới hạn tài nguyên. \nguon{Chương 3, trang PDF 66--69}
+
+\muc{Ý 5. MQTT, ba mức QoS và lựa chọn theo ứng dụng}
+\textbf{MQTT (Message Queuing Telemetry Transport)} là giao thức nhắn tin nhẹ cho telemetry và M2M, được xây dựng trên \textbf{Publish/Subscribe} với publisher, subscriber, broker và topic. Các client thông thường thiết lập kết nối \textbf{TCP} đến broker, có thể xác thực và duy trì phiên. Chương 3 mô tả một session theo bốn pha: \textbf{connection, authentication, communication, termination}.
+
+\textbf{Ba mức QoS trong slide:}
+\begin{itemize}
+\item \textbf{QoS 0 -- At most once:} tối đa một lần, không bảo đảm bên nhận chắc chắn nhận được.
+\item \textbf{QoS 1 -- At least once:} ít nhất một lần nhờ xác nhận/truyền lại; có thể nhận bản tin trùng, ứng dụng nên xử lý trùng khi cần.
+\item \textbf{QoS 2 -- Exactly once:} cơ chế bắt tay tránh xử lý bản tin MQTT bị lặp ở mức giao thức, overhead cao hơn; không đảm bảo toàn bộ quá trình nghiệp vụ bên ngoài MQTT tự động chính xác một lần.
+\end{itemize}
+\textbf{Ưu:} nhỏ gọn, nhiều client cùng nhận sự kiện, dễ mở rộng telemetry và giảm truy vấn lặp. \textbf{Nhược:} cần broker, quản lý kết nối TCP, tài khoản/quyền topic, QoS cao tăng overhead và không thay thế cơ chế lưu lịch sử dữ liệu.
+
+\textbf{Bảng so sánh:}
+\begin{center}\footnotesize
+\begin{tabularx}{\linewidth}{p{2cm}p{2.8cm}p{2.1cm}X}
+\toprule
+Giao thức & Mô hình & Giao vận thường gặp & Trường hợp nên chọn\\
+\midrule
+HTTP & Request/Response & TCP với HTTP/1.1, HTTP/2 & API, Web, truy vấn, cấu hình\\
+CoAP & REST/Request/Response & UDP truyền thống & Nút và mạng giới hạn, gói nhỏ\\
+MQTT & Publish/Subscribe + broker & TCP & Nhiều sensor, dữ liệu theo sự kiện\\
+WebSocket & Hai chiều liên tục & TCP & Dashboard cập nhật liên tục\\
+AMQP & Queue/Messaging, Pub/Sub tùy mô hình & TCP & Tích hợp hệ thống doanh nghiệp\\
+XMPP & Thông điệp XML, có mở rộng Pub/Sub & TCP & Giao tiếp gần thời gian thực\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Ví dụ chọn giao thức:} nếu có hàng trăm sensor gửi nhiệt độ mỗi phút và nhiều dashboard cùng cần dữ liệu, chọn \textbf{MQTT Pub/Sub} là ứng viên hợp lý. Nếu nhân viên chỉ mở ứng dụng xem báo cáo theo yêu cầu, \textbf{HTTP Request/Response} đơn giản. Nếu node chạy pin, đường truyền hạn chế nhưng vẫn cần truy vấn tài nguyên, cân nhắc \textbf{CoAP}. \textbf{Kết luận:} Publish/Subscribe và Request/Response là \emph{mô hình tương tác}; HTTP/CoAP/MQTT là \emph{giao thức} hiện thực mô hình tương ứng, không phải cùng một cấp phân loại. \nguon{Chương 3, trang PDF 60--80}
+
+\begin{luuy}
+Các lỗi hay mất điểm: gọi HTTP là Pub/Sub chỉ vì ESP32 POST liên tục; bỏ qua vai trò broker trong MQTT điển hình; khẳng định UDP tự xác nhận gói; khẳng định CoAP không thể truyền tin đáng tin cậy; khẳng định QoS 2 đảm bảo mọi hành động vật lý không bao giờ lặp.
+\end{luuy}
+
+\newpage
+\section*{Bảng tự kiểm tra: mỗi câu 5 ý}
+\addcontentsline{toc}{section}{Bảng tự kiểm tra: mỗi câu 5 ý}
+\begin{longtable}{p{1.4cm}p{13.2cm}}
+\toprule
+Câu & Năm ý tối thiểu phải trình bày khi làm bài\\
+\midrule\endhead
+1 & Định nghĩa IoT; SO/SE và thành phần; chu trình dữ liệu/điều khiển; đặc trưng/ứng dụng; thách thức/ví dụ.\\
+2 & SoA và thứ tự; Perception; Network; Data Processing; Application và ví dụ xuyên lớp.\\
+3 & Sensor; Actuator; Microprocessor; Microcontroller; bảng so sánh và bài toán khép kín.\\
+4 & Network Access; Internet; Transport; Application; ví dụ end-to-end cùng phân biệt H2M/M2M/M2H/H2H.\\
+5 & LoRaWAN; Sigfox; NB-IoT; LTE-M; 4G/LTE và lựa chọn theo yêu cầu thực tế.\\
+6 & Request/Response; Publish/Subscribe; HTTP; CoAP; MQTT/QoS và so sánh.\\
+\bottomrule
+\end{longtable}
+
+\section*{Nguồn học liệu và giới hạn của đáp án}
+\addcontentsline{toc}{section}{Nguồn học liệu và giới hạn của đáp án}
+\begin{enumerate}
+\item TS. Nguyễn Đắc Cử, \emph{Chapter 1: An overview of IoT}, Đại học Phenikaa, 50 trang PDF.
+\item TS. Nguyễn Đắc Cử, \emph{Chapter 2: IoT Hardware}, Đại học Phenikaa, 79 trang PDF.
+\item TS. Nguyễn Đắc Cử, \emph{Chapter 3: Networking technologies in IoT}, Đại học Phenikaa, 81 trang PDF.
+\item Alice James, Avishkar Seth, Subhas Chandra Mukhopadhyay, \emph{IoT System Design: Project Based Approach}, Springer (sách nguồn được cung cấp).
+\item Adrian McEwen và Hakim Cassimally, \emph{Designing the Internet of Things}, Wiley (2014), sách bổ trợ.
+\item Qusay F. Hassan (chủ biên), \emph{Internet of Things A to Z: Technologies and Applications}, Wiley/IEEE Press (2018), sách bổ trợ.
+\end{enumerate}
+
+\textbf{Nguyên tắc độ tin cậy:} Thông số trong bảng cự ly/tốc độ của Chương 3 là \emph{giá trị tham khảo của slide}, không phải chỉ tiêu cam kết trên mọi thiết bị và địa điểm. Định nghĩa vi xử lý so với MCU và sơ đồ TCP/IP bốn lớp được bổ sung để làm rõ đề ôn tập, không nhận là trích nguyên văn bài giảng. Barem 5 tiêu chí x 1,0 điểm là \emph{giả định luyện thi}, không phải thang điểm chính thức.
+\end{document}
