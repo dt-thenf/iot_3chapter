@@ -1,0 +1,62 @@
+% LuaLaTeX: lualatex -interaction=nonstopmode -halt-on-error main.tex
+% Tài liệu tổng hợp môn Cơ sở và thiết kế hệ thống IoT
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}
+\usepackage[vietnamese]{babel}
+\usepackage{geometry}
+\geometry{margin=2.35cm,headheight=17pt}
+\usepackage{graphicx,booktabs,longtable,array,tabularx,multicol,enumitem}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric,fit,backgrounds,calc}
+\usepackage[most]{tcolorbox}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{float}
+\definecolor{navy}{HTML}{213966}
+\definecolor{teal}{HTML}{087E91}
+\definecolor{orangeiot}{HTML}{D46E18}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=teal,pdftitle={Cơ sở và thiết kế hệ thống IoT - Chương 3},pdfauthor={Bản tổng hợp học tập từ slide TS. Nguyễn Đắc Cử}}
+\titleformat{\chapter}[display]{\normalfont\bfseries\color{navy}}{\large Chương \thechapter}{8pt}{\Huge}
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection}{.7em}{}
+\titleformat{\subsection}{\large\bfseries\color{teal}}{\thesubsection}{.7em}{}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small Cơ sở và thiết kế hệ thống IoT}\fancyhead[R]{\small Chương 3: Công nghệ mạng}\fancyfoot[C]{\thepage}
+\setlength{\parindent}{1.2em}\setlength{\parskip}{.42em}
+\setlist[itemize]{topsep=3pt,itemsep=2pt,leftmargin=2em}
+\newtcolorbox{ghinho}[1][]{colback=blue!3,colframe=navy!75!white,fonttitle=\bfseries,title={Ghi nhớ},breakable,#1}
+\newtcolorbox{nguonslide}[1][]{colback=orange!4,colframe=orangeiot!65!white,fonttitle=\bfseries,title={Đối chiếu slide gốc},breakable,#1}
+\newcommand{\sourcepage}[1]{\textit{(Nguồn: slide Chương 3, trang PDF #1.)}}
+\newcommand{\term}[2]{\textbf{#1} (\textit{#2})}
+\begin{document}
+\begin{titlepage}
+\centering
+\vspace*{30mm}
+{\Large TRƯỜNG ĐẠI HỌC PHENIKAA\\ KHOA ĐIỆN -- ĐIỆN TỬ\par}
+\vspace{18mm}
+{\Huge\bfseries\color{navy}CƠ SỞ VÀ THIẾT KẾ HỆ THỐNG IoT\par}
+\vspace{12mm}
+{\Huge\bfseries\color{orangeiot}CHƯƠNG 3\par}
+\vspace{5mm}
+{\LARGE CÔNG NGHỆ MẠNG TRONG IoT\par}
+\vspace{14mm}
+{\large Tài liệu tổng hợp kiến thức bằng tiếng Việt\par}
+{\large Biên soạn, diễn giải theo học liệu gốc \textit{Chapter 3: Networking technologies in IoT}\par}
+\vfill
+{\large Học liệu gốc: TS. Nguyễn Đắc Cử\\ Khoa Điện -- Điện tử, Trường Đại học Phenikaa\par}
+\vspace{8mm}
+{\small Bản biên soạn phục vụ học tập; các hình minh họa đối chiếu slide gốc được giữ trong phụ lục khi có tệp PDF nguồn.}\par
+\end{titlepage}
+\tableofcontents\clearpage
+\input{chapter3.tex}
+\clearpage
+\IfFileExists{source/chapter3-slides.pdf}{%
+\phantomsection\addcontentsline{toc}{chapter}{Phụ lục: Đối chiếu nguyên bản 81 trang slide}
+\includepdf[pages=-,pagecommand={}]{source/chapter3-slides.pdf}%
+}{}
+\end{document}
