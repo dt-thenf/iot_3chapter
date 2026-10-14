@@ -1,0 +1,86 @@
+% !TeX program = lualatex
+% File độc lập, biên dịch: lualatex on_tap_tu_luan_6_cau.tex
+% Barem là đề xuất ôn tập, KHÔNG phải barem của giảng viên.
+\documentclass[12pt,a4paper]{article}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\usepackage[vietnamese]{babel}
+\usepackage[margin=2.25cm,headheight=17pt]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable,tabularx,enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor,fancyhdr,hyperref,lastpage}
+\definecolor{navy}{HTML}{173D67}
+\definecolor{teal}{HTML}{077B89}
+\hypersetup{colorlinks=true,linkcolor=navy,urlcolor=teal,pdftitle={Bộ 6 câu tự luận IoT - đáp án và barem}}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small CƠ SỞ VÀ THIẾT KẾ HỆ THỐNG IoT}
+\fancyhead[R]{\small 6 câu tự luận}
+\fancyfoot[C]{\thepage/\pageref{LastPage}}
+\setlength{\parindent}{1.1em}\setlength{\parskip}{.42em}
+\setlist[itemize]{leftmargin=1.7em,itemsep=2pt}
+\setlist[enumerate]{leftmargin=1.8em,itemsep=2pt}
+\newtcolorbox{barem}{breakable,colback=teal!3,colframe=teal,title=Barem giả định: 5,0 điểm,fonttitle=\bfseries}
+\newtcolorbox{luuy}{breakable,colback=orange!4,colframe=orange!70!black,title=Lưu ý dễ mất điểm,fonttitle=\bfseries}
+\newcommand{\muc}[1]{\subsection*{#1\hfill{\color{teal}\normalsize [1,0 điểm]}}}
+\newcommand{\nguon}[1]{{\small\itshape\color{navy}Nguồn đối chiếu: #1.}}
+\begin{document}
+\begin{titlepage}\centering\vspace*{30mm}
+{\Large TRƯỜNG ĐẠI HỌC PHENIKAA\\KHOA ĐIỆN -- ĐIỆN TỬ\par}
+\vspace{18mm}
+{\Huge\bfseries\color{navy}BỘ CÂU HỎI TỰ LUẬN\par}
+\vspace{8mm}
+{\LARGE CƠ SỞ VÀ THIẾT KẾ HỆ THỐNG IoT\par}
+\vspace{12mm}
+{\Large 06 câu -- đáp án chuyên sâu\\30 ý trọng tâm -- 5,0 điểm/câu\par}
+\vfill
+\begin{minipage}{.84\linewidth}
+Nguồn: các bài giảng Chapter 1 (Overview), Chapter 2 (Hardware), Chapter 3 (Networking technologies) của TS. Nguyễn Đắc Cử, Trường Đại học Phenikaa; đối chiếu các giáo trình IoT đã cung cấp.
+
+\medskip
+\textbf{Cách sử dụng:} Mỗi câu được chia 5 tiêu chí giả định, mỗi tiêu chí 1 điểm, kèm câu trả lời đủ ý và ví dụ. Đây là phương án ôn tập từ góc nhìn người ra đề, \textbf{không phải barem chính thức}.
+\end{minipage}
+\vspace{15mm}{\large 10/2026}
+\end{titlepage}
+\tableofcontents\newpage
+\section*{Phân biệt các mô hình có số lượng bốn}
+\addcontentsline{toc}{section}{Phân biệt các mô hình có số lượng bốn}
+Chương 1 trực tiếp giới thiệu \textbf{kiến trúc SoA bốn lớp}: Perception, Network, Data Processing, Application. Chương 3 trực tiếp giới thiệu \textbf{bốn loại hình giao tiếp}: H2M, M2M, M2H, H2H, cùng \textbf{bốn nhóm mạng}: Cellular, LAN/PAN, LPWAN, Mesh. \textbf{TCP/IP bốn lớp} (Link, Internet, Transport, Application) được bổ sung để trả lời biến thể đề yêu cầu tính chất của từng \emph{layer truyền thông}; không được nhầm ba mô hình này.
+\newpage
+\section{Câu 1. Các khái niệm và kiến thức cơ bản về IoT}
+\textbf{Đề giả định:} Trình bày các kiến thức cơ bản về IoT.
+\begin{barem}
+\begin{enumerate}
+\item Định nghĩa, bản chất, định danh: 1,0 điểm.
+\item Smart Object, Smart Environment, thành phần: 1,0 điểm.
+\item Nguyên lý hoạt động và luồng dữ liệu: 1,0 điểm.
+\item Đặc điểm, giá trị và ứng dụng: 1,0 điểm.
+\item Thách thức, ví dụ hệ thống đầy đủ: 1,0 điểm.
+\end{enumerate}
+\end{barem}
+\muc{Ý 1. Định nghĩa, bản chất, định danh}
+\textbf{Internet of Things (IoT)} là hệ thống các đối tượng/thiết bị được định danh, tích hợp phần cứng điện tử, phần mềm, cảm biến và khả năng kết nối để thu thập, truyền, nhận và trao đổi dữ liệu qua mạng; chúng có thể thực hiện nhiệm vụ tự động mà không cần tương tác người--người hoặc người--máy trực tiếp cho mỗi lần trao đổi. Đối tượng có thể là thiết bị đeo, phương tiện, công tơ, thẻ theo dõi vật nuôi hoặc cảm biến trong nhà máy.
+
+Điểm cốt lõi không chỉ là có Internet mà còn là \textbf{cảm nhận thế giới thực, tạo dữ liệu, trao đổi thông tin, xử lý và cung cấp dịch vụ/tác động}. IoT khác Internet (hạ tầng liên mạng) và khác M2M (giao tiếp máy--máy có thể nằm trong IoT). Thiết bị con có thể truyền đến một gateway có IP mà không cần IP công khai riêng. Một cảm biến hoạt động độc lập chưa tạo thành một hệ thống IoT hoàn chỉnh. \nguon{Chương 1, trang PDF 5, 13--15; Chương 3, trang PDF 3--6}
+
+\muc{Ý 2. Đối tượng thông minh, môi trường thông minh và cấu trúc}
+\textbf{Smart Object (SO)} là vật thể có gắn khả năng xử lý, bộ nhớ, cảm biến, phương tiện kết nối và có thể thêm cơ cấu chấp hành. SO có thể tự thu thập trạng thái và trao đổi dữ liệu. Xu hướng phát triển SO theo bài giảng: kích thước giảm, mức tiêu thụ điện thấp hơn, năng lực tính toán và khả năng kết nối tăng, tiêu chuẩn hóa cải thiện.
+
+\textbf{Smart Environment (SE)} là không gian trong đó nhiều SO được triển khai, phối hợp và tương tác: nhà thông minh, đô thị thông minh, nhà máy thông minh. Các khối chức năng thường gặp của hệ thống: (i) sensor và actuator; (ii) MCU/máy tính nhúng; (iii) truyền thông/gateway; (iv) edge/cloud với lưu trữ và phân tích; (v) ứng dụng và giao diện người dùng. Không phải mọi hệ thống đều cần gateway hoặc cloud riêng biệt. \nguon{Chương 1, trang PDF 15--18 và 23--28; Chương 2, trang PDF 3}
+
+\muc{Ý 3. Chu trình hoạt động của hệ thống IoT}
+Một vòng hoạt động có năm bước. (1) \textbf{Cảm nhận:} cảm biến đo nhiệt độ, độ ẩm, áp suất, ánh sáng hoặc sự kiện. (2) \textbf{Thu nhận/tiền xử lý:} MCU dùng ADC hoặc giao tiếp số, lọc nhiễu, kiểm tra ngưỡng, đóng gói số đo. (3) \textbf{Truyền thông:} gửi dữ liệu qua Wi-Fi/BLE/Zigbee/LoRaWAN/cellular đến gateway hay server. (4) \textbf{Lưu trữ và phân tích:} nền tảng edge/cloud ghi cơ sở dữ liệu, tổng hợp, phát hiện bất thường hoặc tính toán quyết định. (5) \textbf{Phản hồi:} ứng dụng gửi cảnh báo hoặc MCU nhận lệnh điều khiển relay/van/động cơ. Chu trình lặp lại, tạo một hệ thống giám sát--điều khiển khép kín.
+
+\textbf{Lưu ý:} dữ liệu cảm biến đi lên hệ thống là uplink; lệnh điều khiển đi xuống là downlink; gateway có thể chuyển đổi giao thức và bảo vệ mạng. \nguon{Chương 1, trang PDF 23--27; Chương 2, trang PDF 3--4}
+
+\muc{Ý 4. Đặc trưng, lợi ích và ứng dụng}
+Đặc trưng của IoT gồm: nhiều loại thiết bị không đồng nhất, kết nối phân tán, trao đổi dữ liệu tự động, quy mô lớn, giám sát từ xa, khả năng phản ứng theo sự kiện, nhiều nút có nguồn năng lượng và tính toán hạn chế. Giá trị ứng dụng: giảm chi phí vận hành, phát hiện sự cố sớm, tiết kiệm tài nguyên, nâng chất lượng dịch vụ và ra quyết định dựa trên dữ liệu.
+
+\textbf{Ví dụ lĩnh vực:} Smart Home (đèn, khóa cửa, báo cháy); Smart Agriculture (cảm biến độ ẩm và tưới); Smart City/Traffic (đỗ xe, giao thông); Healthcare (thiết bị đeo giám sát); IIoT (giám sát trạng thái máy, bảo trì); Logistics (theo dõi hàng hóa). Bài giảng minh họa đồng hồ báo thức tự điều chỉnh khi có thay đổi phương tiện đi lại và xe hơi gửi dữ liệu chẩn đoán để hỗ trợ bảo dưỡng. \nguon{Chương 1, trang PDF 44--45}
+
+\muc{Ý 5. Thách thức và ví dụ phân tích đầy đủ}
+Thách thức được slide liệt kê: kết nối Internet ở mọi nơi, chi phí nút cảm biến, hạn chế năng lượng và xử lý, bảo mật và quyền riêng tư, khả năng mở rộng, độ tin cậy, chịu lỗi, tiêu thụ năng lượng thiết bị thu phát, khả năng chấp nhận xã hội.
+
+\textbf{Ví dụ tưới cây thông minh:} cảm biến đo ẩm đất; ESP32 đọc và kiểm tra ngưỡng; Wi-Fi/LoRaWAN gửi bản tin về gateway hoặc server; ứng dụng hiển thị độ ẩm, cảnh báo và cho phép điều chỉnh ngưỡng; relay và bơm/van thực hiện tưới khi có lệnh hợp lệ. Phải phân tích thêm trạng thái mất mạng, sai số cảm biến, nguồn cấp và bảo vệ tránh chạy bơm quá lâu. Đây là lý do thiết kế IoT phải xem xét cả độ tin cậy lẫn chức năng.
+
+\textbf{Kết luận:} IoT là tích hợp giữa vật thể -- cảm biến -- kết nối -- xử lý -- dịch vụ -- hành động, không chỉ là một kết nối Wi-Fi. \nguon{Chương 1, trang PDF 47--49}
