@@ -1,0 +1,64 @@
+% !TeX program = lualatex
+% Tệp gốc ghép Chương 1--3. Hiện chỉ kích hoạt Chương 1.
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage[a4paper,left=25mm,right=22mm,top=24mm,bottom=24mm]{geometry}
+\usepackage{fontspec}
+\defaultfontfeatures{Ligatures=TeX}
+\setmainfont{Noto Serif}
+\setsansfont{Noto Sans}
+\setmonofont{DejaVu Sans Mono}
+\usepackage[vietnamese,english]{babel}
+\babelprovide[import,main]{vietnamese}
+\usepackage{microtype}
+\usepackage{graphicx,float,booktabs,longtable,array,multirow,tabularx,pdfpages}
+\usepackage{xcolor,amsmath,amssymb,enumitem,caption,fancyhdr,titlesec,tikz,hyperref}
+\usetikzlibrary{arrows.meta,positioning,shapes,calc,fit}
+\definecolor{iotblue}{HTML}{1B3A70}
+\definecolor{iotcyan}{HTML}{087EAC}
+\definecolor{iotorange}{HTML}{EA6B21}
+\definecolor{iotlight}{HTML}{EAF2F8}
+\hypersetup{colorlinks=true,linkcolor=iotblue,urlcolor=iotcyan,pdftitle={Tong hop kien thuc IoT - Chuong 1},pdfauthor={Bien soan tieng Viet tu bai giang cua TS. Nguyen Dac Cu}}
+\titleformat{\chapter}[display]{\sffamily\bfseries\color{iotblue}}{\Large CHƯƠNG \thechapter}{1em}{\Huge}
+\titleformat{\section}{\sffamily\Large\bfseries\color{iotblue}}{\thesection}{0.7em}{}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{iotcyan}}{\thesubsection}{0.65em}{}
+\setlist[itemize]{topsep=3pt,itemsep=2pt,leftmargin=1.55em}
+\setlist[enumerate]{topsep=3pt,itemsep=2pt,leftmargin=1.55em}
+\captionsetup{font=small,labelfont=bf,justification=centering}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}\fancyhf{}\fancyhead[L]{\small\sffamily Cơ sở và thiết kế hệ thống IoT}\fancyhead[R]{\small\sffamily Chương \thechapter}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0.4pt}
+\newcommand{\chonesourcepage}[1]{\hfill{\footnotesize\color{gray}(Nguồn: slide #1, Chương 1)}}
+% Hình gốc từ bài giảng: tệp JPEG được xuất bởi scripts/extract_slides.py.
+% Nếu tài nguyên chưa được sinh, tài liệu vẫn biên dịch; hình tương ứng sẽ có ghi chú.
+\newcommand{\choneslidefigure}[2]{\begin{figure}[H]\centering\IfFileExists{assets/chapter1/slide#1.jpg}{\includegraphics[width=0.91\linewidth]{assets/chapter1/slide#1.jpg}}{\fcolorbox{iotblue}{iotlight}{\parbox{.86\linewidth}{\centering\itshape Hình gốc ở slide #1.\\Đặt PDF bài giảng trong thư mục nguồn và chạy script trích xuất hình.}}}\caption{#2 (slide #1 của bài giảng gốc).}\end{figure}}
+\newcommand{\choneemph}[1]{\textcolor{iotblue}{\textbf{#1}}}
+\begin{document}
+\emergencystretch=3em
+\selectlanguage{vietnamese}
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\figurename}{Hình}
+\renewcommand{\tablename}{Bảng}
+\begin{titlepage}
+\centering\vspace*{22mm}
+{\Large\sffamily TRƯỜNG ĐẠI HỌC PHENIKAA\\KHOA ĐIỆN -- ĐIỆN TỬ\par}
+\vspace{28mm}{\Huge\sffamily\bfseries\color{iotblue}CƠ SỞ VÀ THIẾT KẾ HỆ THỐNG IoT\par}
+\vspace{8mm}{\LARGE\color{iotorange}\bfseries CHƯƠNG 1 -- TỔNG QUAN VỀ IoT\par}
+\vspace{5mm}{\large Bản tổng hợp và hệ thống hóa kiến thức bằng tiếng Việt\par}
+\vfill
+\begin{tabular}{rl}\textbf{Giảng viên tài liệu gốc:}& TS. Nguyễn Đắc Cử\\
+\textbf{Mã học phần:}& EEE703006\\
+\textbf{Nguồn chính:}& Chapter 1: An overview of IoT (50 slide)\\
+\textbf{Trình biên dịch:}& LuaLaTeX\\
+\textbf{Phạm vi:}& Chỉ Chương 1; sẵn sàng ghép Chương 2 và 3\end{tabular}
+\vspace{16mm}\end{titlepage}
+\pagenumbering{roman}\tableofcontents\clearpage\pagenumbering{arabic}
+\input{chapter1.tex}
+% Khi có tài liệu hai chương tiếp theo mới bật hai dòng sau:
+% \input{chapter2.tex}
+% \input{chapter3.tex}
+% Phụ lục đầy đủ 50 slide gốc, tùy chọn khi tác giả có quyền sử dụng nguồn.
+\IfFileExists{chapter1_source.pdf}{%
+  \clearpage\chapter*{Phụ lục: 50 slide bài giảng gốc}\addcontentsline{toc}{chapter}{Phụ lục: 50 slide bài giảng gốc}
+  \noindent Phụ lục này giữ nguyên hình minh họa trong toàn bộ 50 trang nguồn để đối chiếu với bản tổng hợp tiếng Việt.
+  \clearpage\includepdf[pages=-]{chapter1_source.pdf}%
+}{}
+\end{document}
