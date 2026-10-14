@@ -137,10 +137,10 @@ Arduino Desktop IDE hỗ trợ Windows, macOS, Linux. Trang 39 dẫn các hướ
 Chú thích được trình biên dịch bỏ qua, dùng để giải thích ý nghĩa mã lệnh. Trang 41 minh họa hai dạng:
 \begin{lstlisting}[language=C++]
 /* Day la chu thich nhieu dong.
-   Cac dong nam trong /* ... */ duoc bo qua. */
+   Cac dong nay duoc bo qua. */
 // Day la chu thich mot dong.
 \end{lstlisting}
-\noindent Lưu ý: đoạn mã trên chỉ nhằm nhận diện cú pháp; không được viết chú thích lồng nhau kiểu \texttt{/* ... /* ... */ ... */} trong mã C/C++ thực tế.
+\noindent Lưu ý: chú thích nhiều dòng theo cú pháp \texttt{/* ... */} không được viết lồng nhau; dấu \texttt{//} dùng cho chú thích một dòng.
 \subsection{Cấu trúc điều khiển: for, if, while, do--while}
 \paragraph{Vòng lặp for (slide 42).} Lặp khối câu lệnh giữa ngoặc nhọn với bộ đếm thường gồm ba biểu thức khởi tạo, điều kiện, bước cập nhật. Biến đếm có thể tăng hoặc giảm.
 \begin{lstlisting}[language=C++]
@@ -303,6 +303,7 @@ Dòng so sánh phản ánh \textbf{đúng hai bo được nêu trong slide 78}, 
 Phần cứng IoT được tổ chức xung quanh \emph{cảm biến} (thu nhận dữ liệu), \emph{cơ cấu chấp hành} (tạo tác động), \emph{bộ điều khiển/tính toán} (quản lý, xử lý, điều khiển), \emph{giao diện I/O}, \emph{khối nguồn} và \emph{khối truyền thông}. Với các tác vụ điều khiển nhúng, Arduino/ATmega và ESP8266/ESP32 là những ví dụ tiêu biểu của MCU. Với các tác vụ cần hệ điều hành, đa nhiệm, xử lý ở biên và giao tiếp phần mềm đa dạng, Raspberry Pi hoặc một bo công nghiệp có thể phù hợp hơn. Intel Edison được bài giảng dùng làm minh họa một kiến trúc mô-đun máy tính nhúng kết hợp nhiều giao diện ngoại vi.
 
 \textbf{Điểm cần ghi nhớ:} lựa chọn không chỉ theo xung CPU, mà theo số chân, điện áp I/O, ADC, dung lượng RAM/Flash, giao tiếp không dây, nguồn, phần mềm công cụ và độ trễ xử lý mong muốn. Các ví dụ, bảng chân và ảnh cấu trúc ở phụ lục giúp đối chiếu thông tin thực tế của chính từng bo, không phải thông số chuẩn cho toàn bộ họ chip.
+\ifdefined\iotstandalone
 \clearpage
 \appendix
 \chapter{Phụ lục: 79 trang slide Chương 2 nguyên bản}
@@ -310,3 +311,4 @@ Phụ lục đính kèm \textbf{đầy đủ 79 trang} tài liệu do người h
 \IfFileExists{assets/chapter2_original_slides.pdf}{%
   \includepdf[pages=1-79,fitpaper=false,offset=0 0,pagecommand={},width=.95\paperwidth]{assets/chapter2_original_slides.pdf}%
 }{\begin{noteiot}Không có tệp \texttt{assets/chapter2\_original\_slides.pdf} trong thư mục dự án. Module \texttt{chapter2.tex} vẫn chứa các phần diễn giải và bảng tra cứu; để hiện ảnh slide nguyên bản hãy đặt PDF nguồn tại vị trí này rồi biên dịch lại.\end{noteiot}}
+\fi % Phụ lục gốc chỉ xuất hiện khi biên dịch riêng Chương 2.
