@@ -11,8 +11,8 @@
 
 ## Tóm tắt xử lý
 
-- Câu gốc hai bộ: **150**; câu trùng/đồng nghĩa hợp nhất: **2**; câu bổ sung từ Quiz W1/W2: **7**; tổng số mục: **155**.
-- Số mục gắn ghi chú AI/đánh giá nguồn: **23**. Câu phụ thuộc hình gốc được ghi rõ.
+- Câu gốc hai bộ: **150**; câu trùng/đồng nghĩa hợp nhất: **2**; câu bổ sung từ Quiz W1/W2: **8**; tổng số mục: **156**.
+- Số mục gắn ghi chú AI/đánh giá nguồn: **24**. Câu phụ thuộc hình gốc được ghi rõ.
 
 ## Danh mục câu hỏi và đáp án
 
@@ -1005,6 +1005,14 @@
 *Nguồn:* Quiz W2 (PDF dscdvsv); Chapter 2 về Sensors/Actuators..
 
 **Ghi chú AI:** TỰ HIỆU ĐÍNH (AI): Câu gốc tự mâu thuẫn ('cơ cấu chấp hành' nhưng còn yêu cầu 'chọn một đáp án sai'); đã viết lại để có đáp án xác định.
+
+**Câu 156. Trong các thiết bị microphone, LED, LCD và loa kỹ thuật số, thiết bị nào là cảm biến?**
+
+**Đáp án:** Microphone (chuyển dao động âm thanh thành tín hiệu điện).
+
+*Nguồn:* Quiz W2, PDF `dscdvsv(2).pdf`, câu 7; Chapter 2: IoT Hardware.
+
+**Ghi chú AI:** TỰ XÁC ĐỊNH/CHUẨN HÓA (AI). Bỏ chỉ dẫn mâu thuẫn 'hãy chọn một đáp án sai' trong văn bản gốc; phân loại theo chức năng kỹ thuật của thiết bị.
 
 ## Những đáp án đã chỉnh sửa hoặc cần rà soát
 
