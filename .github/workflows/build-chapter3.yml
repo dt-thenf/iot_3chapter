@@ -1,0 +1,50 @@
+name: Build Chapter 3 (LuaLaTeX)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'chapter3.tex'
+      - 'main.tex'
+      - 'source/base64/**'
+      - 'scripts/rebuild_slide_pdf.py'
+      - '.github/workflows/build-chapter3.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  compile:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install LuaLaTeX and Vietnamese font support
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            texlive-luatex texlive-latex-extra texlive-lang-other \
+            texlive-fonts-recommended fonts-dejavu-core
+      - name: Recover original slide figures and check SHA256
+        run: python3 scripts/rebuild_slide_pdf.py
+      - name: Compile twice with LuaLaTeX
+        run: |
+          lualatex -interaction=nonstopmode -halt-on-error main.tex
+          lualatex -interaction=nonstopmode -halt-on-error main.tex
+          mv main.pdf chapter3.pdf
+      - name: Upload finished 105-page illustrated PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: iot-chapter3-pdf
+          path: chapter3.pdf
+      - name: Commit updated PDF to repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add chapter3.pdf
+          if ! git diff --cached --quiet; then
+            git commit -m "Build Chapter 3 illustrated PDF with LuaLaTeX"
+            git push
+          fi
