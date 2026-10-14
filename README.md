@@ -27,6 +27,6 @@ lualatex -interaction=nonstopmode -halt-on-error main.tex
 1. Biên soạn thành tài liệu kiến thức chứ không chuyển 81 slide thành 81 trang thuyết trình. Các thông tin đã được nhóm lại theo định danh/địa chỉ, giao thức truyền dẫn, bảo mật, định tuyến, các loại mạng và giao thức dữ liệu.
 2. Những giá trị được ghi **theo slide** được giữ nguyên hoặc ghi chú khi có điểm chưa nhất quán. Không tự coi tốc độ/vùng phủ của bảng là cam kết kỹ thuật cho thiết bị hiện tại.
 3. Phụ lục chứa 81 trang slide nguồn để rà soát toàn bộ hình minh họa và biểu đồ không thể chuyển sang văn bản.
-4. Chưa thêm Chương 1 hay Chương 2. Khi có tài liệu, tạo `chapter1.tex`, `chapter2.tex` riêng và ghép vào `main.tex`, không trộn nội dung của các chương.
+4. `main.tex` của bản này chỉ biên dịch Chương 3. Không sửa đổi hay trộn nội dung các chương khác trong repository; khi ghép tài liệu tổng, tham chiếu từng tệp chương độc lập.
 
 **Lưu ý sử dụng:** PDF gốc của bài giảng thuộc học liệu của tác giả/đơn vị tương ứng; người sử dụng chịu trách nhiệm bảo đảm quyền chia sẻ khi đưa repository vào chế độ công khai.
