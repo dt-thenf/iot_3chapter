@@ -1052,6 +1052,13 @@
 - Các chỉ dẫn “**hãy chọn 1 đáp án sai**” xuất hiện trong câu hỏi nguồn không được sử dụng như yêu cầu thực hiện; tiêu chí biên tập của ngân hàng câu hỏi vẫn là **chỉ giữ đáp án chính xác**.
 - Bằng chứng đối chiếu bổ sung: Quiz W2 lớp N04 (9/10, câu 1 xác nhận Sketch), Quiz W2 lớp N01 (các câu về cảm biến và Arduino), Quiz W1 lớp N02 (kiến trúc Things–Gateway–Cloud–Services).
 
+## Đối chiếu tài liệu bổ sung lần 3 — 14/10/2026
+
+- Đã kiểm tra **2 PDF bổ sung**: `Free Printable Ôn tập cơ sở và thiết kế hệ thống IoT - Trắc nghiệm(3).pdf` (50 câu, 9 trang) và `Free Printable Ôn Tập IoT Giữa Kỳ(3).pdf` (100 câu, 18 trang).
+- Đối chiếu với các file tương ứng hậu tố `(2).pdf` đã tổng hợp: **100% số trang có văn bản trích xuất khớp hoàn toàn** (9/9 và 18/18); đồng thời hình ảnh render của **27/27 trang khớp từng pixel** ở cùng độ phân giải.
+- **Kết quả:** Không phát hiện câu hỏi, đáp án hoặc hình minh họa mới so với hai bộ đề cũ. Giữ nguyên **157 câu hỏi, 157 đáp án**; không thêm các bản sao và không thay đổi đáp án đã được hiệu đính trước đó.
+- Tệp PDF có checksum nhị phân khác nhau nhưng nội dung trang giống nhau; checksum khác không chứng minh có câu mới.
+
 ## Tài liệu đối chiếu
 
 - Slide giảng dạy *Chapter 1: An overview of IoT* (IoT architecture, lịch sử Internet, core concepts).
