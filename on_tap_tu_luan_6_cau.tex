@@ -257,3 +257,79 @@ Không viết vi điều khiển là thiết bị luôn chạy hệ điều hàn
 \item \textbf{H2H -- Human to Human:} con người liên lạc để xử lý, phối hợp và quản lý tình huống phát sinh.
 \end{itemize}
 Chương 3 còn nêu \textbf{bốn nhóm mạng}: Cellular, Local/Personal Area Network, LPWAN, Mesh. Đây là cách phân loại mạng, không phải bốn tầng giao thức. \nguon{Chương 3, trang PDF 4--8 và 47--55}
+
+\newpage
+\section{Câu 5. Nêu năm công nghệ/giao thức truyền thông cho cùng một ứng dụng}
+\textbf{Đề giả định:} Có hệ thống giám sát công tơ nước, cảm biến môi trường hoặc báo động phân bố trên địa bàn nhiều kilômét, chủ yếu gửi bản tin nhỏ, cần tiêu thụ điện thấp. Nêu \textbf{năm phương án truyền thông}, tốc độ, khoảng cách, đặc điểm và ứng dụng; so sánh để chọn phương án. Năm ứng viên có thể cân nhắc trong \emph{cùng yêu cầu truyền xa} là \textbf{LoRaWAN, Sigfox, NB-IoT, LTE-M, cellular 4G/LTE}. Mỗi ý chính là một công nghệ (1 điểm).
+
+\begin{barem}
+\begin{enumerate}
+\item LoRaWAN -- khái niệm, tốc độ, khoảng cách, ưu/nhược và ví dụ: 1,0 điểm.
+\item Sigfox -- tương tự, đặc điểm gửi dữ liệu nhỏ và thưa: 1,0 điểm.
+\item NB-IoT -- LPWAN cellular, phủ sâu và giới hạn: 1,0 điểm.
+\item LTE-M -- cellular LPWAN hai chiều, tính di động và ứng dụng: 1,0 điểm.
+\item 4G/LTE -- tốc độ, tiêu thụ điện, so sánh và chọn giải pháp: 1,0 điểm.
+\end{enumerate}
+\end{barem}
+
+\muc{Ý 1. LoRaWAN: mạng diện rộng năng lượng thấp}
+\textbf{Khái niệm:} LoRaWAN là giao thức mạng LPWAN sử dụng công nghệ vô tuyến LoRa, kết hợp các node, gateway, network server và ứng dụng. Thiết kế dành cho nhiều cảm biến gửi gói nhỏ với chu kỳ thưa và ưu tiên tuổi thọ pin.
+
+\textbf{Theo bảng Chương 3, trang PDF 42:} khoảng cách tham khảo \textbf{15 km}, tốc độ \textbf{0,3--50 kbps}. Slide đưa ví dụ dải tần 867--869 MHz (châu Âu) và 902--928 MHz (Bắc Mỹ); băng tần hợp lệ tại Việt Nam phải kiểm tra theo quy định hiện hành, không sao chép trực tiếp thông số nước ngoài.
+
+\textbf{Ưu:} phủ rộng, hiệu quả năng lượng khi vận hành hợp lý, có thể tự xây mạng riêng thay vì cần SIM cho từng node. \textbf{Nhược:} thông lượng thấp, độ trễ và dung lượng gói bị ảnh hưởng bởi cấu hình, giới hạn thời gian phát, mật độ thiết bị, khoảng cách và nhiễu; cần triển khai gateway hoặc có hạ tầng LoRaWAN. \textbf{Ví dụ:} cảm biến độ ẩm và mực nước trên cánh đồng; công tơ khu vực rộng.
+
+\textbf{Điểm hay bị nhầm:} LoRa là lớp điều chế/vô tuyến, LoRaWAN là giao thức mạng; không phải mọi liên kết LoRa điểm--điểm đều là mạng LoRaWAN. \nguon{Chương 3, trang PDF 35 và 42}
+
+\muc{Ý 2. Sigfox: LPWAN cho dữ liệu ít và không thường xuyên}
+\textbf{Khái niệm:} Sigfox là giải pháp kết nối LPWAN theo mô hình dịch vụ/mạng chuyên dụng, phù hợp cảm biến rất ít dữ liệu, chủ yếu phát trạng thái hoặc thông báo sự kiện, ví dụ đồng hồ đo và báo động. Không phải giao thức thay thế trực tiếp cho Wi-Fi tốc độ cao.
+
+\textbf{Theo bảng trong slide:} phạm vi \textbf{3--50 km}, tốc độ \textbf{10--1000 bps}. Đây là giá trị bảng so sánh mang tính tham khảo; độ phủ thực tế phụ thuộc khu vực, địa hình, công suất phát, hạ tầng nhà khai thác và điều kiện pháp lý.
+
+\textbf{Ưu:} truyền gói dữ liệu rất ngắn, cơ chế tối giản, hướng đến tiêu thụ điện thấp và chi phí vận hành node nhỏ. \textbf{Nhược:} tốc độ cực thấp, dung lượng và tần suất bản tin hạn chế tùy dịch vụ, thường phụ thuộc mức phủ và chính sách nhà khai thác, khả năng downlink không linh hoạt bằng hệ thống băng rộng. \textbf{Ví dụ:} nút báo tràn bể chỉ gửi trạng thái vài lần mỗi ngày. \textbf{Khi chọn:} cần kiểm tra mạng Sigfox có được cung cấp tại vị trí thực tế hay không. \nguon{Chương 3, trang PDF 34 và 42}
+
+\muc{Ý 3. NB-IoT: Narrowband Internet of Things}
+\textbf{Khái niệm:} công nghệ LPWAN mạng di động được chuẩn hóa bởi 3GPP, hướng đến cảm biến cố định với khối lượng dữ liệu nhỏ, số lượng nút rất lớn và khả năng phủ sóng sâu (tầng hầm, hố đo, khu vực che chắn).
+
+\textbf{Đặc điểm chính từ Chương 3:} cải thiện tiêu thụ năng lượng, dung lượng hệ thống và hiệu quả dùng phổ, đặc biệt ở khu vực phủ sâu. Slide nói thời lượng pin \emph{có thể} trên 10 năm ở nhiều trường hợp, \textbf{không phải bảo đảm} cho mọi node/chế độ đo. So với LTE-M, NB-IoT thường hướng tới nút cố định, dữ liệu nhỏ và vận hành tiết kiệm.
+
+\textbf{Thông số tốc độ:} các slide được cung cấp \textbf{không ghi một giá trị tốc độ bit/s cụ thể cho NB-IoT}; vì vậy câu trả lời bám nguồn phải nêu \emph{tốc độ thấp, phụ thuộc chuẩn/release, băng thông và cấu hình mạng}. Không tự điền một mốc kbps duy nhất như thông số tuyệt đối. Khoảng cách cũng phụ thuộc vùng phủ trạm gốc, không thể gán một bán kính cố định chung.
+
+\textbf{Ưu:} không cần tự xây gateway khu vực nếu nhà mạng hỗ trợ; phủ sâu và quản lý được nhiều thiết bị. \textbf{Nhược:} cần dịch vụ/SIM/eSIM phù hợp và có thể trả phí; phụ thuộc vùng phủ NB-IoT thực tế của nhà mạng; không tối ưu truyền ảnh lớn. \textbf{Ví dụ:} công tơ nước/điện thông minh ở khu dân cư. \nguon{Chương 3, trang PDF 41 và 48--49}
+
+\muc{Ý 4. LTE-M (LTE Cat-M/eMTC)}
+\textbf{Khái niệm:} công nghệ LPWAN dựa trên nền mạng LTE, thuộc nhóm giao tiếp M2M/IoT của 3GPP. Bài giảng Chương 3 nhắc eMTC/LTE Cat M1 tại 3GPP Release 13.
+
+\textbf{Đặc điểm:} phù hợp liên lạc hai chiều qua mạng nhà khai thác, có thể đáp ứng ứng dụng yêu cầu trao đổi dữ liệu thường xuyên hoặc thiết bị di động tốt hơn NB-IoT ở nhiều trường hợp. So với 4G băng rộng, LTE-M ưu tiên thiết bị IoT tiết kiệm tài nguyên/điện năng.
+
+\textbf{Tốc độ:} slide không cung cấp giá trị bit/s cố định cho LTE-M; phải ghi \emph{tùy Cat-M/release và cấu hình của mạng}. Về yêu cầu chức năng, LTE-M thường có thông lượng và hỗ trợ di động cao hơn NB-IoT; không giả định mạng 4G sẵn có chắc chắn đã mở dịch vụ LTE-M.
+
+\textbf{Ưu:} phủ diện rộng theo mạng cellular, kết nối hai chiều và phù hợp asset tracking. \textbf{Nhược:} thuê bao, mức năng lượng, chi phí modem, độ phủ và chính sách nhà mạng. \textbf{Ví dụ:} theo dõi thiết bị, hàng hóa hoặc xe di chuyển. \nguon{Chương 3, trang PDF 40 và 48--49}
+
+\muc{Ý 5. 4G/LTE và ra quyết định chọn công nghệ}
+\textbf{Khái niệm:} dùng modem di động 4G để thiết bị có kết nối IP, gửi dữ liệu lên dịch vụ Internet mà không cần gateway LoRaWAN riêng. Đây là phương án truyền xa theo phạm vi vùng phủ trạm gốc, tốc độ cao hơn nhiều công nghệ LPWAN.
+
+\textbf{Tốc độ tham khảo theo bảng Chương 3:} mục Cellular ghi \textbf{21 Mbps cho 3G+}, \textbf{600 Mbps cho 4G}. Đây là mốc tham khảo về công nghệ, \textbf{không phải thông lượng thực tế của mọi modem LTE hay đảm bảo tại vị trí cảm biến}. Một ô trong bảng ghi 30 m giữa node và base station; không dùng 30 m như khoảng cách phủ sóng chuẩn của 4G vì điều đó không phản ánh mạng cellular diện rộng. Tầm phủ phụ thuộc trạm và địa hình, không có số km tuyệt đối trong tài liệu.
+
+\textbf{Ưu:} băng thông lớn, dễ gửi file và truyền dữ liệu thường xuyên khi mạng tốt, kết nối Internet trực tiếp. \textbf{Nhược:} mức tiêu thụ điện và công suất đỉnh thường lớn hơn các LPWAN tối ưu pin, phí SIM/data, hạ tầng mạng, chi phí modem.
+
+\textbf{Phân tích lựa chọn cùng ví dụ công tơ xa:} (i) vùng có thể đặt gateway riêng, chỉ gửi vài byte mỗi 10 phút: \textbf{LoRaWAN}; (ii) gửi cực ít và có dịch vụ nhà khai thác: \textbf{Sigfox}; (iii) công tơ cố định cần phủ sâu: \textbf{NB-IoT}; (iv) node di động cần hai chiều linh hoạt: \textbf{LTE-M}; (v) thiết bị đủ nguồn cần gửi file lớn hoặc cập nhật dày: \textbf{4G/LTE}. \textbf{Không có công nghệ tốt nhất cho mọi bài toán}; lựa chọn dựa trên độ phủ, bit-rate, độ trễ, pin, hạ tầng và tổng chi phí. \nguon{Chương 3, trang PDF 37 và 42, 47--49}
+
+\subsection*{Bảng học thuộc cho tình huống truyền xa}
+\begin{center}\footnotesize
+\begin{tabularx}{\linewidth}{p{2cm}p{2.2cm}p{2.5cm}X}
+\toprule
+Phương án & Khoảng cách theo slide & Tốc độ theo slide & Đặc trưng chính\\
+\midrule
+LoRaWAN & 15 km & 0,3--50 kbps & Pin thấp, cần gateway/hạ tầng LoRaWAN\\
+Sigfox & 3--50 km & 10--1000 bps & Dữ liệu rất ít, mạng dịch vụ\\
+NB-IoT & Không chốt số km & Không chốt số bit/s & Cellular, phủ sâu, nút cố định\\
+LTE-M & Không chốt số km & Không chốt số bit/s & Cellular, di động và hai chiều\\
+4G/LTE & Phụ thuộc vùng phủ & Mốc 600 Mbps (4G) & Băng thông cao, thường hao điện hơn\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{luuy}
+\textbf{Biến thể đề về cự ly gần/tốc độ cao:} phải thay danh sách theo ứng dụng. Bảng Chương 3, trang PDF 42 có mốc \textbf{Bluetooth 100 m, 125 kbps--Mbps}; \textbf{Zigbee 100 m, 20--250 kbps}; \textbf{Z-Wave 100 m, khoảng 100 kbps}; \textbf{Wi-Fi 50 m, 150--600 Mbps}; \textbf{NFC cỡ 4 cm, 100--420 kbps}. Slide riêng NFC ghi mức 106/212/424 kbps; số liệu thay đổi theo chế độ và phiên bản. NFC chỉ thích hợp giao tiếp sát nhau, \emph{không} thể được coi là ứng viên tương đương BLE cho node cách gateway 20 m. Với yêu cầu tốc độ rất cao có thể cân nhắc Wi-Fi/Wi-Fi Direct, UWB, Li-Fi, 4G/5G theo hạ tầng, vật cản, quang thông và phiên bản; không ép năm giao thức có cùng bit-rate.
+\end{luuy}
