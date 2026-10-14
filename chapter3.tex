@@ -41,8 +41,8 @@ Một hệ thống IoT có thể dùng Bluetooth, Wi-Fi, Wi-Fi Direct, giao th�
 \paragraph{Đặt tên tài nguyên và đối tượng.} Ba cơ chế được nêu trong slide gồm:
 \begin{itemize}
 \item \textbf{URI (Uniform Resource Identifier):} chuỗi nhận dạng tài nguyên trên mạng. Ví dụ trong slide: \texttt{http://www.example.com/temperature/}.
-\item \textbf{EPC (Electronic Product Code):} mã định danh đối tượng vật lý, thường mã hóa trên thẻ RFID thụ động. Ví dụ: \texttt{urn:epc:id:sgtin:0614141.012345.62852}.
-\item \textbf{uCode (Ubiquitous Code):} mã định danh của hệ thống định danh đối tượng; ví dụ slide: \texttt{00001C00000000000001000285E7A6E3}. Trang giới thiệu: \url{https://www.uidcenter.org}.
+\item \textbf{EPC (Electronic Product Code):} mã định danh đối tượng vật lý, thường mã hóa trên thẻ RFID thụ động. Ví dụ: \texttt{urn:epc:id:sgtin:}\allowbreak\texttt{0614141.012345.62852}.
+\item \textbf{uCode (Ubiquitous Code):} mã định danh của hệ thống định danh đối tượng; ví dụ slide: \texttt{00001C0000000000}\allowbreak\texttt{0001000285E7A6E3}. Trang giới thiệu: \url{https://www.uidcenter.org}.
 \end{itemize}
 \sourcepage{11}
 
@@ -189,7 +189,7 @@ Thời lượng pin theo bảng & Có thể tới 10 năm & Có thể tới 10 n
 \end{tabularx}\end{table}
 
 \subsection{Bảng tổng hợp phổ, tầm phủ và tốc độ các công nghệ}
-\begin{longtable}{p{2.6cm}p{3.5cm}p{2.25cm}p{3.6cm}}
+\begingroup\small\sloppy\begin{longtable}{p{2.6cm}p{3.5cm}p{2.25cm}p{3.6cm}}
 \caption{Bảng đối chiếu slide PDF trang 42; số liệu tham khảo theo slide, không đại diện mọi phiên bản.}\\
 \toprule Công nghệ & Tần số theo slide & Tầm phủ & Tốc độ theo slide\\\midrule\endfirsthead
 \toprule Công nghệ & Tần số theo slide & Tầm phủ & Tốc độ\\\midrule\endhead
@@ -197,11 +197,11 @@ Bluetooth & 2,4 GHz & 100 m & 125 kbit/s--Mb/s\\
 Wi-Fi & 2,4 hoặc 5 GHz & 50 m & 150--600 Mb/s\\
 NFC & 13,56 MHz & 4 cm & 100--420 kbit/s\\
 LoRaWAN & 867--869 MHz (Âu); 902--928 MHz (Bắc Mỹ) & 15 km & 0,3--50 kbit/s\\
-Cellular & 900/1800/1900/2100 MHz & Bảng nguồn ghi 30 m (nút--trạm), không phải tầm phủ mạng tế bào nói chung & 21 Mb/s (3G+); 600 Mb/s (4G)\\
+Cellular & 900/1800/\allowbreak 1900/2100 MHz & Bảng nguồn ghi 30 m (nút--trạm), không phải tầm phủ mạng tế bào nói chung & 21 Mb/s (3G+); 600 Mb/s (4G)\\
 Z-Wave & 865--926 MHz (ISM) & 100 m & 100 kbit/s\\
 Zigbee & 2,4 GHz (ISM) & 100 m & 20--250 kbit/s\\
 Sigfox & 900 MHz & 3--50 km & 10--1000 bit/s\\\bottomrule
-\end{longtable}
+\end{longtable}\endgroup
 
 \subsection{Bảo mật ở lớp truyền thông}
 Các giao thức được slide nêu bao gồm:
@@ -403,7 +403,7 @@ Kiến trúc này phù hợp hệ thống có xử lý hàng đợi, định tuy
 XMPP là giao thức tiêu chuẩn hóa qua IETF để trao đổi thông tin trên Internet, hoạt động gần thời gian thực, độ trễ thấp theo bối cảnh ứng dụng và có tính độc lập nền tảng/phân tán. Theo slide, XMPP dựa trên TCP, hỗ trợ cả publish/subscribe và request/response; client kết nối tới server và trao đổi bản tin dựa trên \term{XML}{Extensible Markup Language}. Nhờ cấu trúc thông điệp mở rộng, nó có thể phục vụ ứng dụng liên lạc IoT, nhưng XML thường tạo thêm overhead so với các định dạng nhị phân nhỏ gọn. \sourcepage{80}
 
 \subsection{Bảng so sánh các giao thức dữ liệu}
-\begin{longtable}{p{1.8cm}p{3.0cm}p{2.1cm}p{4.2cm}}
+\begingroup\footnotesize\sloppy\begin{longtable}{p{1.8cm}p{3.45cm}p{1.8cm}p{4.15cm}}
 \caption{Tổng hợp từ các slide trang 56--80; một số nhận xét là phân tích hệ thống hóa.}\\
 \toprule Giao thức & Mô hình & Vận chuyển & Ghi chú trong IoT\\\midrule\endfirsthead
 \toprule Giao thức & Mô hình & Vận chuyển & Ghi chú trong IoT\\\midrule\endhead
@@ -413,7 +413,7 @@ MQTT & Publish/subscribe qua broker & TCP & Chủ đề, phiên, QoS 0/1/2\\
 WebSocket & Kết nối song công dài hạn & TCP & Nâng cấp từ HTTP; trao đổi hai chiều liên tục\\
 AMQP & Trao đổi thông điệp, hàng đợi & TCP & Exchange, queue, routing, TLS/SASL\\
 XMPP & Cả publish/subscribe và request/response & TCP & Bản tin XML, mở rộng, gần thời gian thực\\\bottomrule
-\end{longtable}
+\end{longtable}\endgroup
 
 \section{Tổng kết kiến thức và gợi ý ứng dụng}
 \begin{ghinho}[title={Những khái niệm cần phân biệt}]
