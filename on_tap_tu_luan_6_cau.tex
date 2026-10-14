@@ -141,3 +141,69 @@ Dữ liệu cảm biến đi từ lớp thấp lên trên; thông tin điều kh
 \begin{luuy}
 Không đổi tên bốn lớp SoA thành Link--Internet--Transport--Application: đó là ngăn xếp giao thức TCP/IP, thuộc một kiểu phân lớp \textbf{khác}. Không đưa Business vào SoA bốn lớp chỉ vì bài giảng cũng có kiến trúc năm lớp.
 \end{luuy}
+
+\newpage
+\section{Câu 3. Cảm biến, cơ cấu chấp hành, vi xử lý và vi điều khiển}
+\textbf{Đề giả định:} Trình bày khái niệm cảm biến, cơ cấu chấp hành, vi xử lý và vi điều khiển; phân biệt và nêu ví dụ. Đây là dạng câu tuy ngắn nhưng kiểm tra \textbf{bốn định nghĩa, nguyên lý và khả năng liên hệ hệ thống}.
+
+\begin{barem}
+\begin{enumerate}
+\item Sensor: định nghĩa, phương trình, phân loại: 1,0 điểm.
+\item Actuator: định nghĩa, chuyển đổi năng lượng, ví dụ: 1,0 điểm.
+\item Microprocessor: khái niệm, đặc điểm và vai trò: 1,0 điểm.
+\item Microcontroller: cấu tạo tích hợp, ứng dụng và ví dụ: 1,0 điểm.
+\item Bảng so sánh và mô tả hệ thống có đủ các khối: 1,0 điểm.
+\end{enumerate}
+\end{barem}
+
+\muc{Ý 1. Cảm biến (Sensor) và quá trình đo}
+\textbf{Định nghĩa theo slide:} cảm biến là thiết bị đo một đại lượng vật lý, hóa học hoặc sinh học và chuyển nó thành tín hiệu, thường ở dạng điện, có thể được con người hoặc thiết bị điện tử đọc. Tín hiệu đầu ra sau đó có thể được phân tích, xử lý, lưu trữ và truyền qua mạng. Nếu $m$ là đại lượng cần đo và $s$ là tín hiệu đầu ra thì
+\[
+\boxed{s=f(m).}
+\]
+Quan hệ $f$ là đặc tính chuyển đổi, ảnh hưởng tới độ nhạy, tuyến tính, sai số; với cảm biến thực tế cần hiệu chuẩn và xử lý nhiễu.
+
+\textbf{Phân loại theo slide:} (i) chủ động (active), có nguồn kích thích cho phép đo, như radar/siêu âm chủ động phát sóng rồi nhận phản xạ; (ii) thụ động (passive), phần tử cảm nhận không cần nguồn kích thích cho cơ chế phát tín hiệu, như cặp nhiệt điện; (iii) analog có tín hiệu liên tục; (iv) digital cho dữ liệu đã số hóa hoặc trạng thái số. Một mô-đun dùng nguyên lý cảm biến thụ động \emph{vẫn có thể} cần nuôi IC xử lý. Cảm biến số có thể xuất nhiều bit qua I2C/SPI/UART, không chỉ 0/1.
+
+\textbf{Ví dụ:} cảm biến nhiệt độ, độ ẩm, áp suất, khí CO2, siêu âm, PIR, quang trở, cảm biến độ ẩm đất. \nguon{Chương 2, trang PDF 4--12}
+
+\muc{Ý 2. Cơ cấu chấp hành (Actuator)}
+\textbf{Định nghĩa:} cơ cấu chấp hành nhận tín hiệu điều khiển, thường là tín hiệu điện từ bộ điều khiển, rồi biến đổi thành tác động lên môi trường vật lý, ví dụ chuyển động cơ học, thay đổi áp suất, nhiệt độ, ánh sáng hoặc âm thanh. Nếu cảm biến là đường \emph{vật lý $\to$ tín hiệu} thì actuator là đường \emph{lệnh $\to$ tác động vật lý}. Đây là phân biệt bắt buộc để không mất điểm.
+
+\textbf{Ví dụ và phân loại:} động cơ bước/servo/DC tạo chuyển động; van điện từ điều khiển lưu chất; điện trở gia nhiệt tạo nhiệt; LED và còi tạo ánh sáng, âm thanh. Slide minh họa động cơ bước: mỗi xung điều khiển làm trục quay thêm góc định trước, hữu ích trong cánh tay robot có yêu cầu định vị. Với động cơ hoặc tải dòng lớn phải dùng \emph{driver công suất, relay hoặc MOSFET} phù hợp; không đấu trực tiếp tải lớn vào GPIO của MCU.
+
+\textbf{Vai trò:} biến quyết định từ thuật toán thành hành động để đóng kín vòng điều khiển. Ví dụ cảm biến phát hiện nhiệt độ cao, MCU bật quạt thông qua driver. \nguon{Chương 2, trang PDF 13--15}
+
+\muc{Ý 3. Vi xử lý (Microprocessor)}
+\textbf{Khái niệm kỹ thuật bổ sung:} vi xử lý là mạch tích hợp thực hiện chức năng xử lý lệnh của CPU, gồm đơn vị điều khiển, ALU, thanh ghi, bộ nhớ đệm tùy kiến trúc; CPU lấy lệnh, giải mã, tính toán và điều phối hoạt động chương trình. Vi xử lý không tự đồng nhất với một máy tính hoàn chỉnh: RAM, bộ lưu trữ, I/O, nguồn và kết nối được bổ sung ở mức hệ thống; trong SoC hiện đại, nhiều thành phần có thể đã tích hợp trong một chip nên không nên khẳng định vi xử lý luôn thiếu hoàn toàn ngoại vi.
+
+\textbf{Đặc điểm thường gặp:} năng lực xử lý cao, hỗ trợ hệ điều hành/đa nhiệm tùy nền tảng, thích hợp ứng dụng phức tạp; bù lại thường cần hệ phần cứng và công suất nguồn lớn hơn một nút MCU ngủ sâu. Trong IoT, CPU của máy tính bo đơn có thể chạy Linux, dashboard, cơ sở dữ liệu, xử lý ảnh, giao tiếp với nhiều sensor node.
+
+\textbf{Ví dụ:} bộ xử lý ARM trên Raspberry Pi, hoặc vi xử lý ứng dụng trong gateway. \textbf{Chú ý:} Raspberry Pi là bo máy tính đơn, không phải tên của một con CPU. Slide Chương 2 chủ yếu giới thiệu MCU và các bo nền tảng; sự phân biệt microprocessor/MCU trong mục này là \textbf{kiến thức phần cứng bổ sung}, không phải định nghĩa nguyên văn ở một slide Microprocessor riêng. \nguon{Chương 2, mục Microcontroller và Raspberry Pi}
+
+\muc{Ý 4. Vi điều khiển (Microcontroller -- MCU)}
+\textbf{Định nghĩa trực tiếp theo slide:} MCU là mạch tích hợp (IC) -- một máy tính thu nhỏ có \emph{processor, memory, input/output}, có thể lập trình, được thiết kế cho các ứng dụng nhúng. MCU thường tích hợp CPU, bộ nhớ chương trình Flash, RAM, GPIO, timer, ngắt và các ngoại vi ADC/PWM/UART/I2C/SPI theo từng chip.
+
+\textbf{Nguyên lý:} firmware khởi tạo ngoại vi, lấy mẫu tín hiệu cảm biến, tính toán hoặc kiểm tra ngưỡng, truyền bản tin và phát lệnh đến actuator. MCU phù hợp thiết bị giá thấp, nhỏ gọn, lặp điều khiển nhanh và tiết kiệm năng lượng nếu tận dụng sleep/wakeup.
+
+\textbf{Ví dụ Chương 2:} ATmega328P là MCU AVR 8 bit, 32 KB Flash, 2 KB SRAM, 1 KB EEPROM, 23 đường I/O và nguồn 1,8--5,5 V theo slide. Arduino Uno là \emph{bo phát triển} dùng ATmega328P, có 14 chân digital và 6 chân analog như slide mô tả. ESP8266/ESP32 là các nền tảng vi điều khiển có khả năng kết nối không dây, rất thường dùng làm nút IoT. Không đồng nhất tên \emph{Arduino} với một loại MCU duy nhất. \nguon{Chương 2, trang PDF 18--25 và phần ESP8266/ESP32}
+
+\muc{Ý 5. So sánh và ví dụ hệ thống liên hoàn}
+\begin{center}\small
+\begin{tabularx}{\linewidth}{p{2.4cm}XXXX}
+\toprule
+Thuộc tính & Sensor & Actuator & Microprocessor & MCU\\
+\midrule
+Vai trò & Thu thông tin & Tác động vật lý & Xử lý tính toán & Điều khiển nhúng\\
+Dòng thông tin & Vật lý $\to$ điện & Điện $\to$ vật lý & Thực thi lệnh & Đọc I/O và xuất I/O\\
+Ví dụ & Cảm biến nhiệt & Servo/quạt & CPU của SBC & ATmega/ESP32\\
+Vị trí & Ngõ vào & Ngõ ra & Gateway/Edge & Node cảm biến\\
+\bottomrule
+\end{tabularx}
+\end{center}
+\textbf{Ví dụ: hệ thống kiểm soát nhiệt độ phòng.} Cảm biến nhiệt đọc $30^\circ$C, truyền qua I2C/ADC tới ESP32; \textbf{MCU} so ngưỡng, bật chân output để điều khiển \textbf{actuator} quạt thông qua driver. Song song, ESP32 gửi giá trị qua mạng đến Raspberry Pi có bộ xử lý ứng dụng/\textbf{microprocessor} để lưu, hiển thị thống kê và gửi lệnh điều chỉnh từ xa. Nếu dùng cloud thay Raspberry Pi thì khối vi xử lý cục bộ đó không bắt buộc; ví dụ trên chỉ dùng để \emph{phân biệt vai trò của bốn loại phần tử}.
+
+\textbf{Kết luận:} sensor nhận biết, MCU/microprocessor xử lý theo mức tài nguyên cần thiết, actuator thực thi lệnh; nhờ đó IoT trở thành hệ thống cảm nhận và điều khiển, không chỉ ghi lại số đo.
+\begin{luuy}
+Không viết vi điều khiển là thiết bị luôn chạy hệ điều hành Linux; Linux thường gắn với máy tính bo đơn/SoC phù hợp, còn firmware MCU thông thường có thể chạy bare-metal hoặc RTOS. Không khẳng định mọi module cảm biến thụ động đều không dùng nguồn nuôi.
+\end{luuy}
