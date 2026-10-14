@@ -207,3 +207,53 @@ Vị trí & Ngõ vào & Ngõ ra & Gateway/Edge & Node cảm biến\\
 \begin{luuy}
 Không viết vi điều khiển là thiết bị luôn chạy hệ điều hành Linux; Linux thường gắn với máy tính bo đơn/SoC phù hợp, còn firmware MCU thông thường có thể chạy bare-metal hoặc RTOS. Không khẳng định mọi module cảm biến thụ động đều không dùng nguồn nuôi.
 \end{luuy}
+
+\newpage
+\section{Câu 4. Mô hình truyền thông trong IoT (4 lớp)}
+\textbf{Đề giả định:} Trình bày mô hình truyền thông bốn lớp và đặc điểm mỗi layer.
+\begin{barem}
+\begin{enumerate}
+\item Network Access/Link: 1,0 điểm.
+\item Internet/Network: 1,0 điểm.
+\item Transport: 1,0 điểm.
+\item Application: 1,0 điểm.
+\item Ví dụ truyền thông end-to-end và bốn hướng giao tiếp Chương 3: 1,0 điểm.
+\end{enumerate}
+\end{barem}
+\begin{luuy}
+\textbf{Giới hạn nguồn:} Ngăn xếp \textbf{TCP/IP bốn lớp} là \emph{kiến thức mạng được bổ sung} để đáp ứng gợi ý bốn layer. Chương 3 không có một mục chính gọi tên sơ đồ này; slide trực tiếp trình bày H2M/M2M/M2H/H2H, các công nghệ truyền dẫn, địa chỉ IP, TCP/UDP, các giao thức HTTP/CoAP/MQTT. Nếu câu đề thực sự hỏi \emph{bốn kiểu giao tiếp} thì ưu tiên phần H2M/M2M/M2H/H2H ở ý 5, không đánh đồng với bốn lớp TCP/IP.
+\end{luuy}
+
+\muc{Ý 1. Network Access/Link -- lớp truy nhập mạng}
+\textbf{Chức năng:} truy nhập môi trường truyền, trao đổi frame trên liên kết cục bộ và biến thông tin số thành tín hiệu điện/vô tuyến/quang. Một liên kết cụ thể có thể có MAC, địa chỉ liên kết, phát hiện lỗi frame và cơ chế tránh tranh chấp kênh. Các thông số quan trọng là tần số, tốc độ vật lý, tầm truyền, nhiễu, topology, tiêu thụ năng lượng.
+
+\textbf{Ví dụ trong IoT:} Ethernet, Wi-Fi, IEEE 802.15.4; BLE, NFC và LoRa có các hệ thống liên kết riêng nhưng \textbf{không tự động đồng nghĩa với IPv4/IPv6}. Một cảm biến dùng Wi-Fi gửi frame đến access point; lớp này không hiểu nội dung nhiệt độ của bản tin. Tùy cảm biến chạy pin, khả năng ngủ và mức phát vô tuyến ảnh hưởng mạnh tới tuổi thọ. \nguon{Chương 3, trang PDF 19--43; phân lớp TCP/IP được diễn giải bổ sung}
+
+\muc{Ý 2. Internet/Network -- lớp liên mạng}
+\textbf{Chức năng:} địa chỉ hóa logic, tạo gói IP và chọn đường truyền qua nhiều mạng để đến máy chủ; xử lý chuyển tiếp giữa những liên kết vật lý khác nhau. IPv4 dùng địa chỉ 32 bit, IPv6 dùng 128 bit và có không gian địa chỉ lớn. IP cung cấp giao vận kiểu \emph{best-effort}, không tự bảo đảm gói đến đúng thứ tự.
+
+\textbf{Các giao thức liên quan:} IPv4, IPv6, ICMP; 6LoWPAN là công nghệ thích nghi IPv6 với một số liên kết hạn chế. \textbf{RPL} là định tuyến cho mạng IPv6 Low Power and Lossy Network (mạng nhiều node hạn chế và liên kết mất mát), hỗ trợ các kiểu lưu lượng one-to-one, many-to-one, one-to-many. IPsec có thể được triển khai để bảo vệ thông tin ở tầng IP; \textbf{IPv6 không tự động mã hóa tất cả dữ liệu}. \nguon{Chương 3, trang PDF 11--17, 43--44}
+
+\muc{Ý 3. Transport -- lớp giao vận}
+\textbf{Chức năng:} truyền dữ liệu đầu-cuối giữa các tiến trình qua port, xử lý phân đoạn, độ tin cậy và thứ tự tùy giao thức. \textbf{TCP} hướng kết nối, xác nhận dữ liệu, sử dụng số thứ tự và truyền lại để cung cấp luồng byte tin cậy, có thứ tự; đổi lại chi phí kết nối và năng lượng có thể cao hơn. MQTT truyền thống chạy qua TCP; HTTP/1.1 và HTTP/2 cũng dùng TCP.
+
+\textbf{UDP} truyền datagram nhẹ, không thiết lập kết nối theo nghĩa TCP, không tự có đảm bảo phát đến, đúng thứ tự hoặc không trùng. CoAP truyền thống thường chạy qua UDP. UDP \textbf{không} có ACK ở lớp giao vận, nhưng CoAP \emph{Confirmable} có ACK/retransmission ở lớp ứng dụng. TLS thường dùng bảo vệ lưu lượng qua TCP; DTLS phục vụ datagram như UDP. \nguon{Chương 3, trang PDF 43, 65--69, 72--75}
+
+\muc{Ý 4. Application -- lớp giao thức ứng dụng}
+\textbf{Chức năng:} quy định ý nghĩa dữ liệu, phương thức yêu cầu, phản hồi, định dạng bản tin, tài nguyên URI hoặc chủ đề topic, cơ chế ứng dụng nhận lệnh và gửi trạng thái.
+
+\textbf{Giao thức nổi bật:} HTTP dùng request/response, GET/POST/PUT/PATCH/DELETE, stateless; CoAP dùng REST nhẹ, GET/POST/PUT/DELETE, thường qua UDP; MQTT dùng publish/subscribe qua broker với QoS 0, 1, 2; WebSocket tạo kênh hai chiều liên tục; AMQP dùng messaging/queues, XMPP dùng XML cho thông điệp gần thời gian thực. Ứng dụng chọn giao thức theo tính chất dữ liệu, số lượng nút, băng thông, pin, độ trễ và mức tin cậy.
+
+\textbf{Lưu ý lớn:} Application của TCP/IP là \emph{giao thức ứng dụng truyền dữ liệu}; Application của SoA trong câu 2 là \emph{lớp chức năng dịch vụ}; không hoán đổi toàn bộ định nghĩa của hai hệ phân lớp. \nguon{Chương 3, trang PDF 60--80}
+
+\muc{Ý 5. Ví dụ đóng gói và bốn hình thức giao tiếp}
+\textbf{Ví dụ:} ESP32 đo nhiệt độ, tạo payload \texttt{27.6} và \emph{MQTT publish} tới topic \texttt{room1/temp} (Application). Bản tin MQTT đi qua kết nối TCP (Transport); TCP nằm trong gói IPv4/IPv6 và được định tuyến tới broker (Internet); Wi-Fi truyền frame đến access point (Network Access). Broker phân phối dữ liệu tới dashboard đã subscribe. Đây là phép minh họa cụ thể việc mỗi lớp cung cấp chức năng cho lớp trên.
+
+\textbf{Bốn hình thức giao tiếp có trong slide Chương 3:}
+\begin{itemize}
+\item \textbf{H2M -- Human to Machine:} người ra lệnh bằng lời nói/văn bản/hình ảnh để máy xử lý; ví dụ trợ lý giọng nói.
+\item \textbf{M2M -- Machine to Machine:} máy tự trao đổi dữ liệu/lệnh; ví dụ đồng hồ thông minh gửi chỉ số đến gateway.
+\item \textbf{M2H -- Machine to Human:} máy chủ động đưa thông tin/cảnh báo tới người; ví dụ báo cháy.
+\item \textbf{H2H -- Human to Human:} con người liên lạc để xử lý, phối hợp và quản lý tình huống phát sinh.
+\end{itemize}
+Chương 3 còn nêu \textbf{bốn nhóm mạng}: Cellular, Local/Personal Area Network, LPWAN, Mesh. Đây là cách phân loại mạng, không phải bốn tầng giao thức. \nguon{Chương 3, trang PDF 4--8 và 47--55}
